@@ -1,5 +1,8 @@
 [gd_scene format=3 uid="uid://ck24c7fcw7g75"]
 
+[sub_resource type="BoxMesh" id="BoxMesh_y0qk3"]
+size = Vector3(0.05, 0.05, 0.05)
+
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ojbdc"]
 albedo_color = Color(0.20603463, 0.43408245, 1, 1)
 
@@ -15,6 +18,8 @@ points = PackedVector3Array(-0.5, -1, -0.5, -0.5, -1, 0.5, -0.5, 1, -0.5, 0.5, -
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.53849196, -0.21172059)
 
 [node name="point4force" type="MeshInstance3D" parent="playerCam" unique_id=1417855005]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -1.700508)
+mesh = SubResource("BoxMesh_y0qk3")
 
 [node name="playerBody" type="MeshInstance3D" parent="." unique_id=599984515]
 material_override = SubResource("StandardMaterial3D_ojbdc")
