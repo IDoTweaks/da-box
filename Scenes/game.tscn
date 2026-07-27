@@ -1,0 +1,26 @@
+[gd_scene format=3 uid="uid://dqjdk64qdvhjr"]
+
+[ext_resource type="PackedScene" uid="uid://ck24c7fcw7g75" path="res://Objects/player.tscn" id="1_qxrlw"]
+[ext_resource type="Script" uid="uid://l1f2apyjr4u" path="res://Scripts/player.gd" id="2_wrm1d"]
+
+[sub_resource type="Environment" id="Environment_qxrlw"]
+background_mode = 1
+background_color = Color(0.597945, 0.9350514, 0.9338448, 1)
+background_energy_multiplier = 0.85
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_wrm1d"]
+
+[node name="Game" type="Node3D" unique_id=1195243834]
+
+[node name="player" parent="." unique_id=1931754315 instance=ExtResource("1_qxrlw")]
+script = ExtResource("2_wrm1d")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=937142027]
+environment = SubResource("Environment_qxrlw")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=503308550]
+transform = Transform3D(1, 0, 0, 0, -0.7071068, 0.7071067, 0, -0.7071067, -0.7071068, 0, 7.1161666, -9)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=1191835782]
+transform = Transform3D(203.85, 0, 0, 0, 1, 0, 0, 0, 283.24847, 0, -1, 0)
+mesh = SubResource("PlaneMesh_wrm1d")
