@@ -1,0 +1,31 @@
+[gd_scene format=3 uid="uid://cuipo033h4hr3"]
+
+[ext_resource type="Script" uid="uid://cowtirr4or78v" path="res://Scripts/shotgun_fire_particle.gd" id="1_rtneo"]
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_rtneo"]
+direction = Vector3(0, 0.04, 0)
+initial_velocity_min = 1.0
+initial_velocity_max = 5.0
+scale_min = 0.01
+scale_max = 0.049999997
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_erlyh"]
+albedo_color = Color(1, 0.36778843, 0.3002166, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_rtneo"]
+material = SubResource("StandardMaterial3D_erlyh")
+
+[node name="ShotgunFireParticle" type="GPUParticles3D" unique_id=677445845]
+emitting = false
+amount = 40
+lifetime = 0.4
+one_shot = true
+explosiveness = 1.0
+randomness = 1.0
+fixed_fps = 71
+trail_enabled = true
+process_material = SubResource("ParticleProcessMaterial_rtneo")
+draw_pass_1 = SubResource("BoxMesh_rtneo")
+script = ExtResource("1_rtneo")
+
+[connection signal="finished" from="." to="." method="_on_finished"]

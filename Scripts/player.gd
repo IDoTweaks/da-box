@@ -2,6 +2,8 @@ extends CharacterBody3D
 
 const MOUSE_SENSITIVITY = 0.003
 const SPEED = 5
+const DEAFULTFOV = 75.0
+
 var forcesX : Array
 var forcesY : Array
 var forcesZ : Array
@@ -12,17 +14,22 @@ var onCd = false
 @export var explosionFallOff := 1.5
 @export var deafualtShotgunForce := 25.0
 @export var deafultTime := 1
-@export var friction := 30.0
+@export var friction := 10.0
 @export var maxSpeed := 40.0
 
+@onready var shotgunSfx =$shotgunSfx
+@onready var shotgunEnd = $playerCam/shotGun/shotgunEnd
 @onready var shotgun = $playerCam/shotGun
 @onready var ray = $playerCam/RayCast3D
-@onready var player_cam: Camera3D = $playerCam
+@onready var playerCam: Camera3D = $playerCam
 @onready var shotgunCd = $shotgunCd
 @onready var rayEnd = $playerCam/rayEnd
 
+@onready var shotgunFireParticle = preload("res://particles/shotgunFireParticle.tscn")
+
 func _ready() -> void:
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+	playerCam.fov = DEAFULTFOV
 
 
 func _applyForceFromPoint(point, force, time,decay = 0):
@@ -66,8 +73,8 @@ func _applyForceToPoint(point, force, time,decay = 0):
 func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventMouseMotion and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
 		rotate_y(-event.relative.x * MOUSE_SENSITIVITY)
-		player_cam.rotate_x(-event.relative.y * MOUSE_SENSITIVITY)
-		player_cam.rotation.x = clamp(player_cam.rotation.x, deg_to_rad(-89.0), deg_to_rad(89.0))
+		playerCam.rotate_x(-event.relative.y * MOUSE_SENSITIVITY)
+		playerCam.rotation.x = clamp(playerCam.rotation.x, deg_to_rad(-89.0), deg_to_rad(89.0))
 	
 	if event.is_action_pressed("ui_cancel"):
 		if Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
@@ -82,6 +89,17 @@ func _fireShotgun() -> void:
 		point = ray.get_collision_point()
 	else:
 		point = rayEnd.global_position
+	var tween = create_tween()
+	tween.tween_property(playerCam,"fov",DEAFULTFOV + 5,0.1)
+	tween.tween_property(playerCam,"fov",DEAFULTFOV,0.1)
+	
+	shotgunSfx.play()
+	
+	var temp = shotgunFireParticle.instantiate()
+	add_child(temp)
+	temp.global_position = shotgunEnd.global_position
+	temp.emitting = true
+	
 	_applyImpulse(point,global_position - point, deafualtShotgunForce)
 
 func _applyForceDecay(i,delta):
@@ -98,6 +116,7 @@ func _applyImpulse(point,dir : Vector3, strength):
 	if opp < 0:
 		velocity -= n * opp
 	strength -= (global_position.distance_to(point) * explosionFallOff)
+	strength = max(strength,5.0)
 	velocity += n * strength
 	
 
@@ -111,7 +130,8 @@ func _physics_process(delta: float) -> void:
 		velocity += get_gravity() * delta
 	else:
 		#this part is just friction you can play with it and the game feels a lot different
-		velocity.x = move_toward(velocity.x, 0,friction)
+		velocity.x = move_toward(velocity.x, 0,friction * delta)
+		velocity.z = move_toward(velocity.z, 0,friction * delta)
 	
 	#apply forces
 	for i in range(forceTime.size() - 1,-1,-1):
@@ -128,8 +148,7 @@ func _physics_process(delta: float) -> void:
 			forcesY.remove_at(i)
 			forceDecay.remove_at(i)
 	
-	
-	velocity.limit_length(maxSpeed)
+	velocity = velocity.limit_length(maxSpeed)
 	move_and_slide()
 
 
