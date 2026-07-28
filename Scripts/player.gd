@@ -10,6 +10,7 @@ var forcesZ : Array
 var forceTime : Array
 var forceDecay : Array
 var onCd = false
+var inAir = false
 
 @export var explosionFallOff := 1.5
 @export var deafualtShotgunForce := 25.0
@@ -18,6 +19,9 @@ var onCd = false
 @export var maxSpeed := 40.0
 
 @onready var shotgunSfx =$shotgunSfx
+@onready var landSfx = $landSfx
+
+@onready var feet = $feet
 @onready var shotgunEnd = $playerCam/shotGun/shotgunEnd
 @onready var shotgun = $playerCam/shotGun
 @onready var ray = $playerCam/RayCast3D
@@ -26,6 +30,7 @@ var onCd = false
 @onready var rayEnd = $playerCam/rayEnd
 
 @onready var shotgunFireParticle = preload("res://particles/shotgunFireParticle.tscn")
+@onready var landingParticles = preload("res://particles/landingParticles.tscn")
 
 func _ready() -> void:
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
@@ -126,9 +131,18 @@ func _physics_process(delta: float) -> void:
 		onCd = true
 		shotgunCd.start()
 	
+	if inAir and is_on_floor():
+		landSfx.play()
+		var temp = landingParticles.instantiate()
+		add_child(temp)
+		temp.global_position = shotgunEnd.global_position
+		temp.emitting = true
+	
 	if not is_on_floor():
 		velocity += get_gravity() * delta
+		inAir = true
 	else:
+		inAir = false
 		#this part is just friction you can play with it and the game feels a lot different
 		velocity.x = move_toward(velocity.x, 0,friction * delta)
 		velocity.z = move_toward(velocity.z, 0,friction * delta)

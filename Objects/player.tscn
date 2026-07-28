@@ -3,6 +3,7 @@
 [ext_resource type="Script" uid="uid://l1f2apyjr4u" path="res://Scripts/player.gd" id="1_3y5cq"]
 [ext_resource type="PackedScene" uid="uid://ku413v7e53jo" path="res://models/heavy-shotgun-unit/source/shotgun.glb" id="1_y0qk3"]
 [ext_resource type="AudioStream" uid="uid://bhbxv4fhybq6t" path="res://sfx/fireshotgun.wav" id="3_2i4gt"]
+[ext_resource type="AudioStream" uid="uid://teful8u5ky3l" path="res://sfx/landSfx.wav" id="4_0ad8t"]
 
 [sub_resource type="BoxMesh" id="BoxMesh_3y5cq"]
 size = Vector3(0.01, 0.01, 0.01)
@@ -48,5 +49,11 @@ one_shot = true
 
 [node name="shotgunSfx" type="AudioStreamPlayer3D" parent="." unique_id=351342128]
 stream = ExtResource("3_2i4gt")
+
+[node name="landSfx" type="AudioStreamPlayer3D" parent="." unique_id=564967976]
+stream = ExtResource("4_0ad8t")
+
+[node name="feet" type="Node3D" parent="." unique_id=1242261167]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.1, 0)
 
 [connection signal="timeout" from="shotgunCd" to="." method="_on_shotgun_cd_timeout"]
