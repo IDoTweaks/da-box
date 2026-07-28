@@ -1,0 +1,15 @@
+[gd_scene format=3 uid="uid://dy13o62wv6bn0"]
+
+[ext_resource type="Script" uid="uid://df8id0aja2e0k" path="res://Scripts/rays.gd" id="1_1trxd"]
+[ext_resource type="Script" uid="uid://4xarhqo0qd1k" path="res://Scripts/shotgun_manager.gd" id="1_wxfri"]
+[ext_resource type="Script" uid="uid://txenhtrpvhn1" path="res://Scripts/ray_cast_3d.gd" id="3_267qq"]
+
+[node name="shotgunManager" type="Node3D" unique_id=429371704]
+script = ExtResource("1_wxfri")
+
+[node name="rays" type="Node3D" parent="." unique_id=148707750]
+script = ExtResource("1_1trxd")
+
+[node name="RayCast3D" type="RayCast3D" parent="rays" unique_id=1784646804]
+target_position = Vector3(0, 0, -1)
+script = ExtResource("3_267qq")

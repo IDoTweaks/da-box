@@ -21,6 +21,7 @@ var inAir = false
 @onready var shotgunSfx =$shotgunSfx
 @onready var landSfx = $landSfx
 
+@onready var shotgunManager =$playerCam/shotgunManager
 @onready var feet = $feet
 @onready var shotgunEnd = $playerCam/shotGun/shotgunEnd
 @onready var shotgun = $playerCam/shotGun
@@ -105,6 +106,7 @@ func _fireShotgun() -> void:
 	temp.global_position = shotgunEnd.global_position
 	temp.emitting = true
 	
+	shotgunManager._shoot()
 	_applyImpulse(point,global_position - point, deafualtShotgunForce)
 
 func _applyForceDecay(i,delta):
@@ -135,7 +137,7 @@ func _physics_process(delta: float) -> void:
 		landSfx.play()
 		var temp = landingParticles.instantiate()
 		add_child(temp)
-		temp.global_position = shotgunEnd.global_position
+		temp.global_position = feet.global_position
 		temp.emitting = true
 	
 	if not is_on_floor():
