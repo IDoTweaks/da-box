@@ -24,7 +24,6 @@ size = Vector3(2, 0.001, 2)
 [node name="Game" type="Node3D" unique_id=1195243834]
 
 [node name="player" parent="." unique_id=1931754315 instance=ExtResource("1_qxrlw")]
-deafualtShotgunForce = 20.0
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=937142027]
 environment = SubResource("Environment_qxrlw")

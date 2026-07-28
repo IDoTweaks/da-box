@@ -10,8 +10,11 @@ var forceDecay : Array
 var onCd = false
 
 @export var explosionFallOff := 1.5
-@export var deafualtShotgunForce := 12.0
+@export var deafualtShotgunForce := 25.0
 @export var deafultTime := 1
+@export var friction := 30.0
+@export var maxSpeed := 40.0
+
 @onready var shotgun = $playerCam/shotGun
 @onready var ray = $playerCam/RayCast3D
 @onready var player_cam: Camera3D = $playerCam
@@ -108,7 +111,7 @@ func _physics_process(delta: float) -> void:
 		velocity += get_gravity() * delta
 	else:
 		#this part is just friction you can play with it and the game feels a lot different
-		velocity.x = move_toward(velocity.x, 0,30)
+		velocity.x = move_toward(velocity.x, 0,friction)
 	
 	#apply forces
 	for i in range(forceTime.size() - 1,-1,-1):
@@ -126,7 +129,7 @@ func _physics_process(delta: float) -> void:
 			forceDecay.remove_at(i)
 	
 	
-	
+	velocity.limit_length(maxSpeed)
 	move_and_slide()
 
 
