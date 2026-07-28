@@ -1,7 +1,10 @@
 [gd_scene format=3 uid="uid://ck24c7fcw7g75"]
 
-[sub_resource type="BoxMesh" id="BoxMesh_y0qk3"]
-size = Vector3(0.05, 0.05, 0.05)
+[ext_resource type="Script" uid="uid://l1f2apyjr4u" path="res://Scripts/player.gd" id="1_3y5cq"]
+[ext_resource type="PackedScene" uid="uid://ku413v7e53jo" path="res://models/heavy-shotgun-unit/source/shotgun.glb" id="1_y0qk3"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_3y5cq"]
+size = Vector3(0.01, 0.01, 0.01)
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ojbdc"]
 albedo_color = Color(0.20603463, 0.43408245, 1, 1)
@@ -9,23 +12,33 @@ albedo_color = Color(0.20603463, 0.43408245, 1, 1)
 [sub_resource type="BoxMesh" id="BoxMesh_ojbdc"]
 size = Vector3(1, 2, 1)
 
-[sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_ojbdc"]
-points = PackedVector3Array(-0.5, -1, -0.5, -0.5, -1, 0.5, -0.5, 1, -0.5, 0.5, -1, -0.5, 0.5, -1, 0.5, -0.5, 1, 0.5, 0.5, 1, -0.5, 0.5, 1, 0.5)
+[sub_resource type="BoxShape3D" id="BoxShape3D_y0qk3"]
+size = Vector3(1, 2, 1)
 
 [node name="player" type="CharacterBody3D" unique_id=1931754315]
+script = ExtResource("1_3y5cq")
 
 [node name="playerCam" type="Camera3D" parent="." unique_id=69693596]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.53849196, -0.21172059)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.53849196, -0.20830381)
 
-[node name="point4force" type="MeshInstance3D" parent="playerCam" unique_id=1417855005]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -1.700508)
-mesh = SubResource("BoxMesh_y0qk3")
+[node name="shotGun" parent="playerCam" unique_id=412888752 instance=ExtResource("1_y0qk3")]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 0.45876607, -0.28538457, -0.49089807)
+
+[node name="RayCast3D" type="RayCast3D" parent="playerCam" unique_id=1988810625]
+target_position = Vector3(0, 0, -5)
+
+[node name="rayEnd" type="MeshInstance3D" parent="playerCam" unique_id=598920199]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -4.9915795)
+mesh = SubResource("BoxMesh_3y5cq")
 
 [node name="playerBody" type="MeshInstance3D" parent="." unique_id=599984515]
 material_override = SubResource("StandardMaterial3D_ojbdc")
 mesh = SubResource("BoxMesh_ojbdc")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="playerBody" unique_id=367779451]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=1500620033]
+shape = SubResource("BoxShape3D_y0qk3")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="playerBody/StaticBody3D" unique_id=1500620033]
-shape = SubResource("ConvexPolygonShape3D_ojbdc")
+[node name="shotgunCd" type="Timer" parent="." unique_id=2074402688]
+wait_time = 0.2
+
+[connection signal="timeout" from="shotgunCd" to="." method="_on_shotgun_cd_timeout"]
