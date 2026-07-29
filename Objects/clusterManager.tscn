@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://4oor6jdy5b22"]
+
+[ext_resource type="Script" uid="uid://b72i0x2ho2idi" path="res://Scripts/cluster_manager.gd" id="1_bsqer"]
+
+[node name="ClusterManager" type="Node3D" unique_id=1558638358]
+script = ExtResource("1_bsqer")

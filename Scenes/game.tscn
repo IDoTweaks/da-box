@@ -1,6 +1,8 @@
 [gd_scene format=3 uid="uid://dqjdk64qdvhjr"]
 
 [ext_resource type="PackedScene" uid="uid://ck24c7fcw7g75" path="res://Objects/player.tscn" id="1_qxrlw"]
+[ext_resource type="PackedScene" uid="uid://4oor6jdy5b22" path="res://Objects/clusterManager.tscn" id="2_qxrlw"]
+[ext_resource type="PackedScene" uid="uid://xdiocqwy80g1" path="res://Objects/enemy.tscn" id="3_wrm1d"]
 
 [sub_resource type="Environment" id="Environment_qxrlw"]
 background_mode = 1
@@ -106,3 +108,102 @@ mesh = SubResource("PlaneMesh_wrm1d")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D3" unique_id=702294208]
 transform = Transform3D(0.9999999, 0, 0, 0, 0.9999999, 0, 0, 0, 0.9999999, 0, 0, 0)
 shape = SubResource("BoxShape3D_qxrlw")
+
+[node name="ClusterManager" parent="." unique_id=1558638358 node_paths=PackedStringArray("target") instance=ExtResource("2_qxrlw")]
+target = NodePath("../player")
+
+[node name="Enemy" parent="." unique_id=458966374 node_paths=PackedStringArray("clusterManager") instance=ExtResource("3_wrm1d")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 2, -10)
+moveSpeed = 20.0
+hoverHeight = 10.0
+clusterManager = NodePath("../ClusterManager")
+
+[node name="Enemy2" parent="." unique_id=2123748882 node_paths=PackedStringArray("clusterManager") instance=ExtResource("3_wrm1d")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 2, -10)
+moveSpeed = 20.0
+hoverHeight = 10.0
+clusterManager = NodePath("../ClusterManager")
+
+[node name="Enemy3" parent="." unique_id=1083179826 node_paths=PackedStringArray("clusterManager") instance=ExtResource("3_wrm1d")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 2, -10)
+moveSpeed = 20.0
+hoverHeight = 10.0
+clusterManager = NodePath("../ClusterManager")
+
+[node name="Enemy4" parent="." unique_id=2120102190 node_paths=PackedStringArray("clusterManager") instance=ExtResource("3_wrm1d")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 2, -10)
+moveSpeed = 20.0
+hoverHeight = 10.0
+clusterManager = NodePath("../ClusterManager")
+
+[node name="Enemy5" parent="." unique_id=503913995 node_paths=PackedStringArray("clusterManager") instance=ExtResource("3_wrm1d")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 2, -10)
+moveSpeed = 20.0
+hoverHeight = 10.0
+clusterManager = NodePath("../ClusterManager")
+
+[node name="Enemy6" parent="." unique_id=358971437 node_paths=PackedStringArray("clusterManager") instance=ExtResource("3_wrm1d")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 2, -10)
+moveSpeed = 20.0
+hoverHeight = 10.0
+clusterManager = NodePath("../ClusterManager")
+
+[node name="Enemy7" parent="." unique_id=2137367251 node_paths=PackedStringArray("clusterManager") instance=ExtResource("3_wrm1d")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 2, -10)
+moveSpeed = 20.0
+hoverHeight = 10.0
+clusterManager = NodePath("../ClusterManager")
+
+[node name="Enemy8" parent="." unique_id=813406296 node_paths=PackedStringArray("clusterManager") instance=ExtResource("3_wrm1d")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 2, -10)
+moveSpeed = 20.0
+hoverHeight = 10.0
+clusterManager = NodePath("../ClusterManager")
+
+[node name="Enemy9" parent="." unique_id=1092416216 node_paths=PackedStringArray("clusterManager") instance=ExtResource("3_wrm1d")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 2, -10)
+moveSpeed = 20.0
+hoverHeight = 10.0
+clusterManager = NodePath("../ClusterManager")
+
+[node name="Enemy10" parent="." unique_id=1686641660 node_paths=PackedStringArray("clusterManager") instance=ExtResource("3_wrm1d")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 2, -10)
+moveSpeed = 20.0
+hoverHeight = 10.0
+clusterManager = NodePath("../ClusterManager")
+
+[node name="Enemy11" parent="." unique_id=2053676132 node_paths=PackedStringArray("clusterManager") instance=ExtResource("3_wrm1d")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 2, -10)
+moveSpeed = 20.0
+hoverHeight = 10.0
+clusterManager = NodePath("../ClusterManager")
+
+[node name="Enemy12" parent="." unique_id=170441931 node_paths=PackedStringArray("clusterManager") instance=ExtResource("3_wrm1d")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 2, -10)
+moveSpeed = 20.0
+hoverHeight = 10.0
+clusterManager = NodePath("../ClusterManager")
+
+[node name="Enemy13" parent="." unique_id=1873975225 node_paths=PackedStringArray("clusterManager") instance=ExtResource("3_wrm1d")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 2, -10)
+moveSpeed = 20.0
+hoverHeight = 10.0
+clusterManager = NodePath("../ClusterManager")
+
+[node name="Enemy14" parent="." unique_id=1932810820 node_paths=PackedStringArray("clusterManager") instance=ExtResource("3_wrm1d")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 2, -10)
+moveSpeed = 20.0
+hoverHeight = 10.0
+clusterManager = NodePath("../ClusterManager")
+
+[node name="Enemy15" parent="." unique_id=1273496877 node_paths=PackedStringArray("clusterManager") instance=ExtResource("3_wrm1d")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 2, -10)
+moveSpeed = 20.0
+hoverHeight = 10.0
+clusterManager = NodePath("../ClusterManager")
+
+[node name="Enemy16" parent="." unique_id=550153040 node_paths=PackedStringArray("clusterManager") instance=ExtResource("3_wrm1d")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 2, -10)
+moveSpeed = 20.0
+hoverHeight = 10.0
+clusterManager = NodePath("../ClusterManager")
