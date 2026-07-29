@@ -12,11 +12,18 @@ extends CharacterBody3D
 @export var clusterManager : Node3D
 @export var health = 100
 
+@onready var up = $up
+@onready var dwn = $dwn
+@onready var forward = $forward
+@onready var backward = $backward
+@onready var right = $right
+@onready var left = $left
+
 func _ready() -> void:
 	clusterManager._register(self)
 
 func _damage(amount : int) -> void:
 	health -= amount
 	if health <= 0:
-		get_node("../clusterManager")._unregister(self)
+		clusterManager._unRegister(self)
 		queue_free()

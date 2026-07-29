@@ -26,6 +26,8 @@ const DEAFULTS := {
 	"bobAmount":0.0,
 	"bobSpeed":2.0,
 	"attackPriority":0.0,
+	"avoidStrength":2.0,
+	"detourDistance":2.0,
 }
 
 func _stat(enemy,key):
@@ -39,8 +41,17 @@ func _register(enemy):
 	var stats := {}
 	for key in DEAFULTS:
 		stats[key] = _stat(enemy,key)
+	
+	var rays := {}
+	if stats["flying"]:
+		for key in ["up","dwn", "forward", "backward", "right", "left"]:
+			var r = enemy.get(key)
+			if r is RayCast3D:
+				rays[key] = r
+	
 	data[enemy] = {
 		"stats":stats,
+		"rays" : rays,
 		"slot":-1,
 		"path": PackedVector3Array(),
 		"idx":0,
@@ -56,7 +67,6 @@ func _refreshStats(enemy):
 	if enemy in data:
 		for key in DEAFULTS:
 			data[enemy]["stats"][key] = _stat(enemy,key)
-
 
 func _getState(enemy) ->String:
 	return data[enemy]["state"] if enemy in data else "circle"
@@ -121,10 +131,41 @@ func _repath():
 		if d["stats"]["flying"]:
 			if d["state"] == "attack":
 				goal.y = target.global_position.y + d["stats"]["hoverHeight"]
-			d["path"] = PackedVector3Array([goal])
+			d["path"] = _flyPath(enemy,goal)
 		else:
 			d["path"] = NavigationServer3D.map_get_path(map,enemy.global_position,goal,true)
 		d["idx"] = 0
+
+func _flyPath(enemy,goal : Vector3) -> PackedVector3Array:
+	var d = data[enemy]
+	var toGoal:Vector3 = goal - enemy.global_position
+	if toGoal.length() < .01 or d["rays"].is_empty():
+		return PackedVector3Array([goal])
+	var goalDir = toGoal.normalized()
+	
+	var frontkey = ""
+	var frontDot = -INF
+	for key in d["rays"]:
+		var dot = _rayWorldDir(d["rays"][key]).dot(goalDir)
+		if dot > frontDot:
+			frontDot = dot
+			frontkey = key
+	if frontkey != "" and _rayClearance(d["rays"][frontkey]) >= 1:
+		return PackedVector3Array([goal])
+	
+	var best = Vector3.ZERO
+	var bestScore =  -INF
+	for key in d["rays"]:
+		var dir = _rayWorldDir(d["rays"][key])
+		var score = _rayClearance(d["rays"][key]) * 2 + dir.dot(goalDir)
+		if score > bestScore:
+			bestScore = score
+			best = dir
+	if best == Vector3.ZERO:
+		return PackedVector3Array([goal])
+	return PackedVector3Array([enemy.global_position + best * d["stats"]["detourDistance"], goal])
+	
+	
 
 func _seperation(enemy)-> Vector3:
 	var s = data[enemy]["stats"]
@@ -159,6 +200,7 @@ func _moveEnemy(enemy,delta):
 	var desired = dir * s["moveSpeed"] + _seperation(enemy)
 	
 	if s["flying"]:
+		desired += _rayAvoidance(enemy) * s["avoidStrength"] *s["moveSpeed"]
 		if s["bobAmount"] > 0:
 			d["phase"] += delta * s["bobSpeed"]
 			desired.y += sin(d["phase"]) * s["bobAmount"]
@@ -182,6 +224,37 @@ func _moveEnemy(enemy,delta):
 	if enemy.global_position.distance_to(look) > .1:
 		var wanted = enemy.global_transform.looking_at(look,Vector3.UP)
 		enemy.global_transform.basis = enemy.global_transform.basis.slerp(wanted.basis, clamp(s["turnSpeed"] * delta,0,1))
+
+func _rayClearance(ray: RayCast3D)-> float:
+	var maxLeng = ray.target_position.length()
+	if maxLeng <= 0:
+		return 1
+	ray.force_raycast_update()
+	if not ray.is_colliding():
+		return 1
+	var dist = ray.global_position.distance_to(ray.get_collision_point())
+	return clamp(dist/ maxLeng, 0, 1)
+	
+
+func _rayWorldDir(ray : RayCast3D) ->Vector3:
+	return (ray.to_global(ray.target_position) - ray.global_position).normalized()
+
+func _rayAvoidance(enemy) -> Vector3:
+	var d = data[enemy]
+	var push = Vector3.ZERO
+	for key in d["rays"]:
+		var ray : RayCast3D = d["rays"][key]
+		if !is_instance_valid(ray):
+			continue
+		var clear = _rayClearance(ray)
+		if clear >= 1:
+			continue
+		push += ray.get_collision_normal() * (1.0 - clear)
+		
+	return push
+
+
+
 
 func _physics_process(delta: float) -> void:
 	if target == null:

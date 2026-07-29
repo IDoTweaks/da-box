@@ -1,0 +1,35 @@
+[gd_scene format=3 uid="uid://xdiocqwy80g1"]
+
+[ext_resource type="Script" uid="uid://bsi6gtkxjqfps" path="res://Scripts/enemy.gd" id="1_edmjf"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_dnm5c"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_qtiyw"]
+
+[node name="Drone" type="CharacterBody3D" unique_id=458966374]
+collision_layer = 4
+script = ExtResource("1_edmjf")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=1118463597]
+mesh = SubResource("BoxMesh_dnm5c")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=889328053]
+shape = SubResource("BoxShape3D_qtiyw")
+
+[node name="up" type="RayCast3D" parent="." unique_id=1266517962]
+target_position = Vector3(0, 3, 0)
+
+[node name="dwn" type="RayCast3D" parent="." unique_id=1147505847]
+target_position = Vector3(0, -3, 0)
+
+[node name="forward" type="RayCast3D" parent="." unique_id=1478167983]
+target_position = Vector3(0, 0, -3)
+
+[node name="backward" type="RayCast3D" parent="." unique_id=587391884]
+target_position = Vector3(0, 0, 3)
+
+[node name="right" type="RayCast3D" parent="." unique_id=1424723900]
+target_position = Vector3(3, 0, 0)
+
+[node name="left" type="RayCast3D" parent="." unique_id=126519651]
+target_position = Vector3(-3, 0, 0)

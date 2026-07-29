@@ -19,6 +19,7 @@ size = Vector3(1, 2, 1)
 size = Vector3(1, 2, 1)
 
 [node name="player" type="CharacterBody3D" unique_id=1931754315]
+collision_layer = 2
 script = ExtResource("1_3y5cq")
 
 [node name="playerCam" type="Camera3D" parent="." unique_id=69693596]
