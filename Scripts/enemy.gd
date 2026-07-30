@@ -18,6 +18,8 @@ extends CharacterBody3D
 @onready var backward = $backward
 @onready var right = $right
 @onready var left = $left
+@onready var rocket = preload("res://Objects/rocket.tscn")
+@onready var rocketSpawn = $launchPoint
 
 func _ready() -> void:
 	clusterManager._register(self)
@@ -27,3 +29,12 @@ func _damage(amount : int) -> void:
 	if health <= 0:
 		clusterManager._unRegister(self)
 		queue_free()
+
+func _shootRocket(targ):
+	var temp = rocket.instantiate()
+	get_tree().current_scene.add_child(temp)
+	temp._launch(rocketSpawn.global_position, targ.global_position)
+
+func _telegraph(duration):
+	#add here a charge sound
+	pass

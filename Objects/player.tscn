@@ -18,7 +18,7 @@ size = Vector3(1, 2, 1)
 [sub_resource type="BoxShape3D" id="BoxShape3D_y0qk3"]
 size = Vector3(1, 2, 1)
 
-[node name="player" type="CharacterBody3D" unique_id=1931754315]
+[node name="player" type="CharacterBody3D" unique_id=1931754315 groups=["blastable"]]
 collision_layer = 2
 script = ExtResource("1_3y5cq")
 

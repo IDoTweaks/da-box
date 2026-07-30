@@ -1,0 +1,187 @@
+[gd_scene load_steps=27 format=3 uid="uid://ruxqwqogu64j"]
+
+[ext_resource type="Shader" uid="uid://b2jkghct2they" path="res://shaders/explosionVfx.gdshader" id="1_ib3bo"]
+[ext_resource type="Texture2D" uid="uid://cvagxr0bt5dwt" path="res://particles/explosion_flipbook.png" id="2_flip"]
+[ext_resource type="Texture2D" uid="uid://cn0551favrix1" path="res://particles/explosion_flipbook_normal.png" id="3_nrm"]
+[ext_resource type="Texture2D" uid="uid://bihqqm60danpr" path="res://particles/normal_bias.png" id="4_bias"]
+[ext_resource type="Script" uid="uid://debwvycalssvi" path="res://Scripts/explosion_vfx.gd" id="5_script"]
+
+[sub_resource type="Gradient" id="Gradient_albedo"]
+offsets = PackedFloat32Array(0, 0.45, 1)
+colors = PackedColorArray(0.04, 0.036, 0.032, 1, 0.17, 0.09, 0.055, 1, 0.44, 0.3, 0.21, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_albedo"]
+gradient = SubResource("Gradient_albedo")
+
+[sub_resource type="Gradient" id="Gradient_emission"]
+offsets = PackedFloat32Array(0, 0.35, 0.6, 0.82, 1)
+colors = PackedColorArray(0, 0, 0, 1, 0.06, 0.006, 0, 1, 0.26, 0.055, 0.005, 1, 0.76, 0.31, 0.04, 1, 1, 0.85, 0.5, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_emission"]
+gradient = SubResource("Gradient_emission")
+
+[sub_resource type="Gradient" id="Gradient_falloff"]
+offsets = PackedFloat32Array(0, 0.18, 0.45, 1)
+colors = PackedColorArray(1, 1, 1, 1, 0.5, 0.5, 0.5, 1, 0.12, 0.12, 0.12, 1, 0, 0, 0, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_falloff"]
+gradient = SubResource("Gradient_falloff")
+
+[sub_resource type="Gradient" id="Gradient_soft"]
+offsets = PackedFloat32Array(0, 1)
+colors = PackedColorArray(0, 0, 0, 1, 1, 1, 1, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_soft"]
+gradient = SubResource("Gradient_soft")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_ky15u"]
+render_priority = 0
+shader = ExtResource("1_ib3bo")
+shader_parameter/particle_h_frames = 8.0
+shader_parameter/particle_v_frames = 8.0
+shader_parameter/particles_anim_loop = false
+shader_parameter/still_frame = -1.0
+shader_parameter/Soft_limit = 0.25
+shader_parameter/blend_scale = 0.6
+shader_parameter/emission_falloff_multiplier = 0.28
+shader_parameter/tex_frg_2 = ExtResource("2_flip")
+shader_parameter/tex_frg_27 = SubResource("GradientTexture1D_albedo")
+shader_parameter/tex_frg_24 = SubResource("GradientTexture1D_soft")
+shader_parameter/tex_frg_25 = SubResource("GradientTexture1D_falloff")
+shader_parameter/tex_frg_26 = SubResource("GradientTexture1D_emission")
+shader_parameter/tex_frg_16 = ExtResource("3_nrm")
+shader_parameter/tex_frg_17 = ExtResource("4_bias")
+
+[sub_resource type="QuadMesh" id="QuadMesh_0u6ef"]
+material = SubResource("ShaderMaterial_ky15u")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_ib3bo"]
+lifetime_randomness = 0.3
+emission_shape = 1
+emission_sphere_radius = 0.9
+spread = 180.0
+initial_velocity_min = 1.2
+initial_velocity_max = 4.2
+gravity = Vector3(0, 1.5, 0)
+damping_min = 3.0
+damping_max = 6.5
+scale_min = 2.0
+scale_max = 4.2
+anim_speed_min = 1.0
+anim_speed_max = 1.0
+
+[sub_resource type="Gradient" id="Gradient_spark"]
+offsets = PackedFloat32Array(0, 0.35, 0.75, 1)
+colors = PackedColorArray(1, 0.95, 0.7, 1, 1, 0.6, 0.2, 1, 0.8, 0.2, 0.05, 1, 0.3, 0.05, 0.01, 0)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_spark"]
+gradient = SubResource("Gradient_spark")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_spark"]
+transparency = 1
+vertex_color_use_as_albedo = true
+albedo_color = Color(1, 0.62, 0.25, 1)
+emission_enabled = true
+emission = Color(1, 0.55, 0.18, 1)
+emission_energy_multiplier = 6.0
+
+[sub_resource type="BoxMesh" id="BoxMesh_spark"]
+material = SubResource("StandardMaterial3D_spark")
+size = Vector3(0.07, 0.07, 0.07)
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_spark"]
+lifetime_randomness = 0.45
+emission_shape = 1
+emission_sphere_radius = 0.4
+spread = 180.0
+initial_velocity_min = 7.0
+initial_velocity_max = 17.0
+gravity = Vector3(0, -14, 0)
+damping_min = 1.0
+damping_max = 3.5
+scale_min = 0.4
+scale_max = 1.3
+color_ramp = SubResource("GradientTexture1D_spark")
+
+[sub_resource type="Gradient" id="Gradient_smoke"]
+offsets = PackedFloat32Array(0, 0.15, 0.6, 1)
+colors = PackedColorArray(0.35, 0.28, 0.24, 0, 0.16, 0.14, 0.13, 0.75, 0.1, 0.095, 0.09, 0.45, 0.08, 0.08, 0.08, 0)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_smoke"]
+gradient = SubResource("Gradient_smoke")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_smoke"]
+transparency = 1
+vertex_color_use_as_albedo = true
+albedo_color = Color(0.12, 0.11, 0.105, 1)
+roughness = 1.0
+
+[sub_resource type="BoxMesh" id="BoxMesh_smoke"]
+material = SubResource("StandardMaterial3D_smoke")
+size = Vector3(0.55, 0.55, 0.55)
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_smoke"]
+lifetime_randomness = 0.4
+emission_shape = 1
+emission_sphere_radius = 0.9
+spread = 180.0
+initial_velocity_min = 1.0
+initial_velocity_max = 4.0
+angular_velocity_min = -90.0
+angular_velocity_max = 90.0
+gravity = Vector3(0, 1.2, 0)
+damping_min = 2.0
+damping_max = 5.0
+scale_min = 0.7
+scale_max = 2.0
+color_ramp = SubResource("GradientTexture1D_smoke")
+
+[node name="ExplosionVfx" type="Node3D" unique_id=1679080691]
+script = ExtResource("5_script")
+
+[node name="Fireball" type="GPUParticles3D" parent="." unique_id=1679080692]
+emitting = false
+amount = 22
+lifetime = 1.1
+one_shot = true
+explosiveness = 0.95
+randomness = 0.4
+fixed_fps = 60
+visibility_aabb = AABB(-6, -6, -6, 12, 12, 12)
+draw_order = 3
+process_material = SubResource("ParticleProcessMaterial_ib3bo")
+draw_pass_1 = SubResource("QuadMesh_0u6ef")
+
+[node name="Sparks" type="GPUParticles3D" parent="." unique_id=1679080693]
+emitting = false
+amount = 46
+lifetime = 0.9
+one_shot = true
+explosiveness = 1.0
+randomness = 0.6
+fixed_fps = 60
+visibility_aabb = AABB(-10, -10, -10, 20, 20, 20)
+trail_enabled = true
+trail_lifetime = 0.12
+process_material = SubResource("ParticleProcessMaterial_spark")
+draw_pass_1 = SubResource("BoxMesh_spark")
+
+[node name="Smoke" type="GPUParticles3D" parent="." unique_id=1679080694]
+emitting = false
+amount = 18
+lifetime = 2.0
+one_shot = true
+explosiveness = 0.85
+randomness = 0.5
+fixed_fps = 30
+visibility_aabb = AABB(-8, -8, -8, 16, 16, 16)
+draw_order = 3
+process_material = SubResource("ParticleProcessMaterial_smoke")
+draw_pass_1 = SubResource("BoxMesh_smoke")
+
+[node name="Flash" type="OmniLight3D" parent="." unique_id=1679080695]
+light_color = Color(1, 0.67, 0.35, 1)
+light_energy = 0.0
+shadow_enabled = false
+omni_range = 14.0
+omni_attenuation = 1.5

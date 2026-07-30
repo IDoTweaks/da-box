@@ -1,0 +1,17 @@
+[gd_scene format=3 uid="uid://by65hcmlpi2aq"]
+
+[ext_resource type="PackedScene" uid="uid://ptn8yfc8cbb3" path="res://models/low_poly_missile.glb" id="1_5icsd"]
+[ext_resource type="Script" uid="uid://05repjr2cbf4" path="res://Scripts/rocket.gd" id="1_ijyl3"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_ijyl3"]
+size = Vector3(2.0698242, 0.50445557, 0.5196533)
+
+[node name="Rocket" type="Area3D" unique_id=286356923]
+script = ExtResource("1_ijyl3")
+
+[node name="Sketchfab_Scene" parent="." unique_id=857511448 instance=ExtResource("1_5icsd")]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 0.032928467, 0, 0.027130127)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=1673458595]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 0.027130125, 0.003753662, -0.032928467)
+shape = SubResource("BoxShape3D_ijyl3")

@@ -5,7 +5,10 @@ extends Node3D
 @export var maxAttackers := 2
 @export var switchPenalty := 3.0
 @export var backBias := 2.0
+@export var globalFireInterval := .5
+@export var losMask :=1
 
+var globalFireTimer := 0.0
 var enemies : Array = []
 var data : Dictionary = {}
 var slotDirs : Array[Vector3] = []
@@ -28,6 +31,10 @@ const DEAFULTS := {
 	"attackPriority":0.0,
 	"avoidStrength":2.0,
 	"detourDistance":2.0,
+	"fireCooldown":2.0,
+	"fireRange":40.0,
+	"windUp":.5,
+	"needsLineOfSight":true,
 }
 
 func _stat(enemy,key):
@@ -56,7 +63,9 @@ func _register(enemy):
 		"path": PackedVector3Array(),
 		"idx":0,
 		"state": "circle",
-		"phase":  randf() * TAU
+		"phase":  randf() * TAU,
+		"nextFire" : randf() * stats["fireCooldown"],
+		"windUp" : -1.0
 	}
 
 func _unRegister(enemy):
@@ -120,6 +129,52 @@ func _assignRoles():
 	for i in sorted.size():
 		data[sorted[i]]["state"] = "attack" if i < maxAttackers else "circle"
 	
+
+func _hasLineOfSight(enemy) ->bool:
+	var space = get_world_3d().direct_space_state
+	var query = PhysicsRayQueryParameters3D.create(enemy.global_position, target.global_position)
+	query.collision_mask = losMask
+	var excluds := [enemy.get_rid()]
+	if target is CollisionObject3D:
+		excluds.append(target.get_rid())
+	query.exclude = excluds
+	return space.intersect_ray(query).is_empty()
+
+func _fire(enemy):
+	var d = data[enemy]
+	d["windUp"] = -1.0
+	if enemy.has_method("_attack"):
+		enemy._attack(target)
+	elif enemy.has_method("_shootRocket"):
+		enemy._shootRocket(target)
+
+func _updateShooting(delta):
+	globalFireTimer -=delta
+	for enemy in enemies:
+		var d = data[enemy]
+		var s = d["stats"]
+		
+		if d["windUp"] > 0:
+			d["windUp"] -= delta
+			if d["windUp"] <= 0:
+				_fire(enemy)
+			continue
+		d["nextFire"] -=delta
+		if d["nextFire"] > 0 or globalFireTimer >0 or (s["needsLineOfSight"] and !_hasLineOfSight(enemy)) or d["state"] != "attack" or enemy.global_position.distance_to(target.global_position) > s["fireRange"]:
+			continue
+		globalFireTimer = globalFireInterval
+		d["nextFire"] = s["fireCooldown"] * randf_range(.85,1.15)
+		if s["windUp"] > 0:
+			d["windUp"] = s["windUp"]
+			if enemy.has_method("_telegraph"):
+				enemy._telegraph(s["windUp"])
+		else:
+			_fire(enemy)
+	
+	
+	
+
+
 
 func _repath():
 	var map = get_world_3d().navigation_map
@@ -269,5 +324,6 @@ func _physics_process(delta: float) -> void:
 		_assignRoles()
 		_assignSlots()
 		_repath()
+	_updateShooting(delta)
 	for enemy in enemies:
 		_moveEnemy(enemy, delta)
