@@ -1,19 +1,17 @@
 [gd_scene format=3 uid="uid://xdiocqwy80g1"]
 
 [ext_resource type="Script" uid="uid://bsi6gtkxjqfps" path="res://Scripts/enemy.gd" id="1_edmjf"]
-
-[sub_resource type="BoxMesh" id="BoxMesh_dnm5c"]
+[ext_resource type="PackedScene" uid="uid://h2sbdbxin43l" path="res://models/low-poly-quadcopter-drone-game-ready-pbr-asset/source/drone.glb" id="2_j8ubb"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_qtiyw"]
+size = Vector3(1, 0.22007751, 0.7451782)
 
 [node name="Drone" type="CharacterBody3D" unique_id=458966374]
 collision_layer = 4
 script = ExtResource("1_edmjf")
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=1118463597]
-mesh = SubResource("BoxMesh_dnm5c")
-
 [node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=889328053]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.10799408, -0.005279541)
 shape = SubResource("BoxShape3D_qtiyw")
 
 [node name="up" type="RayCast3D" parent="." unique_id=1266517962]
@@ -33,3 +31,6 @@ target_position = Vector3(3, 0, 0)
 
 [node name="left" type="RayCast3D" parent="." unique_id=126519651]
 target_position = Vector3(-3, 0, 0)
+
+[node name="Product visualization" parent="." unique_id=881429829 instance=ExtResource("2_j8ubb")]
+transform = Transform3D(1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.5, 0, 0, 0)

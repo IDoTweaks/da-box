@@ -118,182 +118,182 @@ target = NodePath("../player")
 
 [node name="Drone" parent="." unique_id=458966374 node_paths=PackedStringArray("clusterManager") instance=ExtResource("3_wrm1d")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 4, -7)
-moveSpeed = 100.0
-acceleration = 40.0
+moveSpeed = 40.0
+acceleration = 20.0
 clusterManager = NodePath("../ClusterManager")
 
 [node name="Drone2" parent="." unique_id=1224386273 node_paths=PackedStringArray("clusterManager") instance=ExtResource("3_wrm1d")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 4, -7)
-moveSpeed = 100.0
-acceleration = 40.0
+moveSpeed = 40.0
+acceleration = 20.0
 clusterManager = NodePath("../ClusterManager")
 
 [node name="Drone3" parent="." unique_id=1301863081 node_paths=PackedStringArray("clusterManager") instance=ExtResource("3_wrm1d")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 4, -7)
-moveSpeed = 100.0
-acceleration = 40.0
+moveSpeed = 40.0
+acceleration = 20.0
 clusterManager = NodePath("../ClusterManager")
 
 [node name="Drone4" parent="." unique_id=1630005736 node_paths=PackedStringArray("clusterManager") instance=ExtResource("3_wrm1d")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 4, -7)
-moveSpeed = 100.0
-acceleration = 40.0
+moveSpeed = 40.0
+acceleration = 20.0
 clusterManager = NodePath("../ClusterManager")
 
 [node name="Drone5" parent="." unique_id=1091746424 node_paths=PackedStringArray("clusterManager") instance=ExtResource("3_wrm1d")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 4, -7)
-moveSpeed = 100.0
-acceleration = 40.0
+moveSpeed = 40.0
+acceleration = 20.0
 clusterManager = NodePath("../ClusterManager")
 
 [node name="Drone6" parent="." unique_id=1225650071 node_paths=PackedStringArray("clusterManager") instance=ExtResource("3_wrm1d")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 4, -7)
-moveSpeed = 100.0
-acceleration = 40.0
+moveSpeed = 40.0
+acceleration = 20.0
 clusterManager = NodePath("../ClusterManager")
 
 [node name="Drone7" parent="." unique_id=77964089 node_paths=PackedStringArray("clusterManager") instance=ExtResource("3_wrm1d")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 4, -7)
-moveSpeed = 100.0
-acceleration = 40.0
+moveSpeed = 40.0
+acceleration = 20.0
 clusterManager = NodePath("../ClusterManager")
 
 [node name="Drone8" parent="." unique_id=1867324380 node_paths=PackedStringArray("clusterManager") instance=ExtResource("3_wrm1d")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 4, -7)
-moveSpeed = 100.0
-acceleration = 40.0
+moveSpeed = 40.0
+acceleration = 20.0
 clusterManager = NodePath("../ClusterManager")
 
 [node name="Drone9" parent="." unique_id=1562029799 node_paths=PackedStringArray("clusterManager") instance=ExtResource("3_wrm1d")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 4, -7)
-moveSpeed = 100.0
-acceleration = 40.0
+moveSpeed = 40.0
+acceleration = 20.0
 clusterManager = NodePath("../ClusterManager")
 
 [node name="Drone10" parent="." unique_id=206104452 node_paths=PackedStringArray("clusterManager") instance=ExtResource("3_wrm1d")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 4, -7)
-moveSpeed = 100.0
-acceleration = 40.0
+moveSpeed = 40.0
+acceleration = 20.0
 clusterManager = NodePath("../ClusterManager")
 
 [node name="Drone11" parent="." unique_id=621481942 node_paths=PackedStringArray("clusterManager") instance=ExtResource("3_wrm1d")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 4, -7)
-moveSpeed = 100.0
-acceleration = 40.0
+moveSpeed = 40.0
+acceleration = 20.0
 clusterManager = NodePath("../ClusterManager")
 
 [node name="Drone12" parent="." unique_id=2040124810 node_paths=PackedStringArray("clusterManager") instance=ExtResource("3_wrm1d")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 4, -7)
-moveSpeed = 100.0
-acceleration = 40.0
+moveSpeed = 40.0
+acceleration = 20.0
 clusterManager = NodePath("../ClusterManager")
 
 [node name="Drone13" parent="." unique_id=323010637 node_paths=PackedStringArray("clusterManager") instance=ExtResource("3_wrm1d")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 4, -7)
-moveSpeed = 100.0
-acceleration = 40.0
+moveSpeed = 40.0
+acceleration = 20.0
 clusterManager = NodePath("../ClusterManager")
 
 [node name="Drone14" parent="." unique_id=1835769363 node_paths=PackedStringArray("clusterManager") instance=ExtResource("3_wrm1d")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 4, -7)
-moveSpeed = 100.0
-acceleration = 40.0
+moveSpeed = 40.0
+acceleration = 20.0
 clusterManager = NodePath("../ClusterManager")
 
 [node name="Drone15" parent="." unique_id=558048404 node_paths=PackedStringArray("clusterManager") instance=ExtResource("3_wrm1d")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 4, -7)
-moveSpeed = 100.0
-acceleration = 40.0
+moveSpeed = 40.0
+acceleration = 20.0
 clusterManager = NodePath("../ClusterManager")
 
 [node name="Drone16" parent="." unique_id=748949670 node_paths=PackedStringArray("clusterManager") instance=ExtResource("3_wrm1d")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 4, -7)
-moveSpeed = 100.0
-acceleration = 40.0
+moveSpeed = 40.0
+acceleration = 20.0
 clusterManager = NodePath("../ClusterManager")
 
 [node name="Drone17" parent="." unique_id=1948028161 node_paths=PackedStringArray("clusterManager") instance=ExtResource("3_wrm1d")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 4, -7)
-moveSpeed = 100.0
-acceleration = 40.0
+moveSpeed = 40.0
+acceleration = 20.0
 clusterManager = NodePath("../ClusterManager")
 
 [node name="Drone18" parent="." unique_id=958028483 node_paths=PackedStringArray("clusterManager") instance=ExtResource("3_wrm1d")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 4, -7)
-moveSpeed = 100.0
-acceleration = 40.0
+moveSpeed = 40.0
+acceleration = 20.0
 clusterManager = NodePath("../ClusterManager")
 
 [node name="Drone19" parent="." unique_id=379404182 node_paths=PackedStringArray("clusterManager") instance=ExtResource("3_wrm1d")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 4, -7)
-moveSpeed = 100.0
-acceleration = 40.0
+moveSpeed = 40.0
+acceleration = 20.0
 clusterManager = NodePath("../ClusterManager")
 
 [node name="Drone20" parent="." unique_id=1762884297 node_paths=PackedStringArray("clusterManager") instance=ExtResource("3_wrm1d")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 4, -7)
-moveSpeed = 100.0
-acceleration = 40.0
+moveSpeed = 40.0
+acceleration = 20.0
 clusterManager = NodePath("../ClusterManager")
 
 [node name="Drone21" parent="." unique_id=641896315 node_paths=PackedStringArray("clusterManager") instance=ExtResource("3_wrm1d")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 4, -7)
-moveSpeed = 100.0
-acceleration = 40.0
+moveSpeed = 40.0
+acceleration = 20.0
 clusterManager = NodePath("../ClusterManager")
 
 [node name="Drone22" parent="." unique_id=1476140216 node_paths=PackedStringArray("clusterManager") instance=ExtResource("3_wrm1d")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 4, -7)
-moveSpeed = 100.0
-acceleration = 40.0
+moveSpeed = 40.0
+acceleration = 20.0
 clusterManager = NodePath("../ClusterManager")
 
 [node name="Drone23" parent="." unique_id=2144701689 node_paths=PackedStringArray("clusterManager") instance=ExtResource("3_wrm1d")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 4, -7)
-moveSpeed = 100.0
-acceleration = 40.0
+moveSpeed = 40.0
+acceleration = 20.0
 clusterManager = NodePath("../ClusterManager")
 
 [node name="Drone24" parent="." unique_id=435674849 node_paths=PackedStringArray("clusterManager") instance=ExtResource("3_wrm1d")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 4, -7)
-moveSpeed = 100.0
-acceleration = 40.0
+moveSpeed = 40.0
+acceleration = 20.0
 clusterManager = NodePath("../ClusterManager")
 
 [node name="Drone25" parent="." unique_id=1088430132 node_paths=PackedStringArray("clusterManager") instance=ExtResource("3_wrm1d")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 4, -7)
-moveSpeed = 100.0
-acceleration = 40.0
+moveSpeed = 40.0
+acceleration = 20.0
 clusterManager = NodePath("../ClusterManager")
 
 [node name="Drone26" parent="." unique_id=773210037 node_paths=PackedStringArray("clusterManager") instance=ExtResource("3_wrm1d")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 4, -7)
-moveSpeed = 100.0
-acceleration = 40.0
+moveSpeed = 40.0
+acceleration = 20.0
 clusterManager = NodePath("../ClusterManager")
 
 [node name="Drone27" parent="." unique_id=2096551678 node_paths=PackedStringArray("clusterManager") instance=ExtResource("3_wrm1d")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 4, -7)
-moveSpeed = 100.0
-acceleration = 40.0
+moveSpeed = 40.0
+acceleration = 20.0
 clusterManager = NodePath("../ClusterManager")
 
 [node name="Drone28" parent="." unique_id=1382889001 node_paths=PackedStringArray("clusterManager") instance=ExtResource("3_wrm1d")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 4, -7)
-moveSpeed = 100.0
-acceleration = 40.0
+moveSpeed = 40.0
+acceleration = 20.0
 clusterManager = NodePath("../ClusterManager")
 
 [node name="Drone29" parent="." unique_id=1637127337 node_paths=PackedStringArray("clusterManager") instance=ExtResource("3_wrm1d")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 4, -7)
-moveSpeed = 100.0
-acceleration = 40.0
+moveSpeed = 40.0
+acceleration = 20.0
 clusterManager = NodePath("../ClusterManager")
 
 [node name="Drone30" parent="." unique_id=1126313137 node_paths=PackedStringArray("clusterManager") instance=ExtResource("3_wrm1d")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 4, -7)
-moveSpeed = 100.0
-acceleration = 40.0
+moveSpeed = 40.0
+acceleration = 20.0
 clusterManager = NodePath("../ClusterManager")
 
 [node name="NavigationRegion3D" type="NavigationRegion3D" parent="." unique_id=1898132346]
