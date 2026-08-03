@@ -6,6 +6,7 @@ extends Node3D
 @export var reach : float
 @export var dmg: int
 @export var hitMask : int
+@export var coreBias : float
 @export var start : Node3D
 
 # Called when the node enters the scene tree for the first time.
@@ -14,10 +15,13 @@ func _ready() -> void:
 	raysManager.reach = reach
 	raysManager.spread = spread
 	raysManager.hitMask = hitMask
+	raysManager.coreBias = coreBias
 	raysManager._createRays()
 	raysManager._randomizeRays()
 
 func _shoot():
+	raysManager._randomizeRays()
+	var hits = 0
 	var rays = raysManager.rays
 	for ray : RayCast3D in rays:
 		ray.force_raycast_update()
@@ -28,7 +32,9 @@ func _shoot():
 		var hitObj = ray.get_collider()
 		if hitObj.has_method("_damage"):
 			hitObj._damage(dmg)
-		
+			hits += 1
+	return hits
+
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:

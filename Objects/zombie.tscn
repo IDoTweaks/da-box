@@ -1,0 +1,55 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://Scripts/zombie.gd" id="1_zomb"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_zomb"]
+radius = 0.4
+height = 1.8
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_zomb"]
+albedo_color = Color(0.36078432, 0.54901963, 0.32156864, 1)
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_zomb"]
+material = SubResource("StandardMaterial3D_zomb")
+radius = 0.4
+height = 1.8
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_hbbg"]
+shading_mode = 0
+albedo_color = Color(0.08, 0.08, 0.08, 1)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_hbfill"]
+shading_mode = 0
+albedo_color = Color(0.85, 0.16, 0.16, 1)
+
+[sub_resource type="QuadMesh" id="QuadMesh_hbbg"]
+material = SubResource("StandardMaterial3D_hbbg")
+size = Vector2(1.2, 0.14)
+
+[sub_resource type="QuadMesh" id="QuadMesh_hbfill"]
+material = SubResource("StandardMaterial3D_hbfill")
+size = Vector2(1.2, 0.14)
+
+[node name="Zombie" type="CharacterBody3D"]
+collision_layer = 4
+script = ExtResource("1_zomb")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
+shape = SubResource("CapsuleShape3D_zomb")
+
+[node name="placeholderMesh" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
+mesh = SubResource("CapsuleMesh_zomb")
+
+[node name="healthBar" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.15, 0)
+
+[node name="bg" type="MeshInstance3D" parent="healthBar"]
+cast_shadow = 0
+mesh = SubResource("QuadMesh_hbbg")
+
+[node name="fill" type="MeshInstance3D" parent="healthBar"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.005)
+cast_shadow = 0
+mesh = SubResource("QuadMesh_hbfill")

@@ -3,29 +3,27 @@ extends CharacterBody3D
 var maxHealth
 var dead := false
 
-@export var moveSpeed := 6.0
-@export var acceleration := 6.0
-@export var flying := true
-@export var hoverHeight := 4.0
-@export var ringRadius := 8.0
-@export var separationRadius := 2.5
-@export var attackRange := 6.0
-@export var bobAmount := 0.8
+@export var moveSpeed := 4.5
+@export var acceleration := 10.0
+@export var turnSpeed := 8.0
+@export var flying := false
+@export var ringRadius := 4.0
+@export var seperationRadius := 1.8
+@export var seperationStrength := 4.0
+@export var waypointToTolerance := .6
+@export var attackRange := 1.8
 @export var attackPriority := 1.0
+@export var fireCooldown := 1.5
+@export var fireRange := 2.5
+@export var windUp := .45
+@export var needsLineOfSight := false
+@export var dmg := 12
 @export var clusterManager : Node3D
-@export var health = 100
+@export var health = 150
 
-@onready var up = $up
-@onready var dwn = $dwn
-@onready var forward = $forward
-@onready var backward = $backward
-@onready var right = $right
-@onready var left = $left
 @onready var healthBar = $healthBar
 @onready var healthFill = $healthBar/fill
-@onready var rocket = preload("res://Objects/rocket.tscn")
 @onready var explosionVfx = preload("res://particles/explosionVfx.tscn")
-@onready var rocketSpawn = $launchPoint
 
 func _ready() -> void:
 	maxHealth = health
@@ -51,9 +49,19 @@ func _die():
 
 func _spawnVfx():
 	var vfx = explosionVfx.instantiate()
-	vfx.size = .6
+	vfx.size = .5
 	get_tree().current_scene.add_child(vfx)
 	vfx.global_position = global_position
+
+func _attack(targ):
+	if global_position.distance_to(targ.global_position) > fireRange:
+		return
+	if targ.has_method("_damage"):
+		targ._damage(dmg)
+
+func _telegraph(duration):
+	#add here a growl
+	pass
 
 func _showHealthBar():
 	healthBar.visible = true
@@ -67,20 +75,10 @@ func _updateHealthBar():
 	healthFill.scale.x = ratio
 	healthFill.position.x = -(w * (1 - ratio)) / 2
 
-func _shootRocket(targ):
-	var temp = rocket.instantiate()
-	get_tree().current_scene.add_child(temp)
-	temp._launch(rocketSpawn.global_position, targ.global_position)
-
-func _telegraph(duration):
-	#add here a charge sound
-	pass
-
 func _process(delta: float) -> void:
 	if not healthBar.visible:
 		return
 	var cam = get_viewport().get_camera_3d()
 	if cam == null:
 		return
-	#quads face +z so we aim the bar away from the cam to get it facing us
 	healthBar.look_at(healthBar.global_position + (healthBar.global_position - cam.global_position))

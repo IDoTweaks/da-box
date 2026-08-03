@@ -3,6 +3,7 @@
 [ext_resource type="PackedScene" uid="uid://ck24c7fcw7g75" path="res://Objects/player.tscn" id="1_qxrlw"]
 [ext_resource type="PackedScene" uid="uid://4oor6jdy5b22" path="res://Objects/clusterManager.tscn" id="2_qxrlw"]
 [ext_resource type="PackedScene" uid="uid://xdiocqwy80g1" path="res://Objects/drone.tscn" id="3_wrm1d"]
+[ext_resource type="PackedScene" path="res://Objects/zombie.tscn" id="4_zomb"]
 
 [sub_resource type="Environment" id="Environment_qxrlw"]
 background_mode = 1
@@ -234,6 +235,22 @@ clusterManager = NodePath("../ClusterManager")
 
 [node name="Drone30" parent="." unique_id=1126313137 node_paths=PackedStringArray("clusterManager") instance=ExtResource("3_wrm1d")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 4, -7)
+clusterManager = NodePath("../ClusterManager")
+
+[node name="Zombie" parent="." node_paths=PackedStringArray("clusterManager") instance=ExtResource("4_zomb")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7, -0.9, -12)
+clusterManager = NodePath("../ClusterManager")
+
+[node name="Zombie2" parent="." node_paths=PackedStringArray("clusterManager") instance=ExtResource("4_zomb")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11, -0.9, -14)
+clusterManager = NodePath("../ClusterManager")
+
+[node name="Zombie3" parent="." node_paths=PackedStringArray("clusterManager") instance=ExtResource("4_zomb")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, -0.9, -18)
+clusterManager = NodePath("../ClusterManager")
+
+[node name="Zombie4" parent="." node_paths=PackedStringArray("clusterManager") instance=ExtResource("4_zomb")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, -0.9, -9)
 clusterManager = NodePath("../ClusterManager")
 
 [node name="NavigationRegion3D" type="NavigationRegion3D" parent="." unique_id=1898132346]

@@ -4,14 +4,18 @@ extends Node3D
 @export var spread : float
 @export var reach : float
 @export var hitMask : int
+@export var coreBias : float
 
 @onready var ray = $RayCast3D
 var rays
 
 func _randomizeRays():
 	for raycast : RayCast3D in rays:
-		raycast.target_position.x += randf_range(-(spread / 4),(spread / 4))
-		raycast.target_position.y += randf_range(-(spread / 4),(spread / 4))
+		var angle = randf() * TAU
+		var dist = (spread / 4) * pow(randf(),coreBias)
+		raycast.target_position.x = cos(angle) * dist
+		raycast.target_position.y = sin(angle) * dist
+		raycast.target_position.z = -reach
 
 func _ready() -> void:
 	rays = [ray]

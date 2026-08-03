@@ -112,7 +112,9 @@ func _fireShotgun() -> void:
 	temp.global_position = shotgunEnd.global_position
 	temp.emitting = true
 	
-	shotgunManager._shoot()
+	var hits = shotgunManager._shoot()
+	if hits > 0:
+		guiCanvas._hitMarker()
 	_applyImpulse(point,global_position - point, deafualtShotgunForce * kbMult)
 
 func _applyForceDecay(i,delta):
