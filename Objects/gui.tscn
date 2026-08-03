@@ -1,0 +1,14 @@
+[gd_scene format=3 uid="uid://dmijitrof0kmm"]
+
+[ext_resource type="Script" uid="uid://b5nh8vimrvynk" path="res://Scripts/gui.gd" id="1_on31g"]
+
+[node name="GUI" type="CanvasLayer" unique_id=1918774894]
+script = ExtResource("1_on31g")
+
+[node name="ProgressBar" type="ProgressBar" parent="." unique_id=509790561]
+modulate = Color(1, 0.09411765, 0.22352941, 1)
+offset_top = 425.0
+offset_right = 119.0
+offset_bottom = 1080.0
+value = 55.49
+fill_mode = 3

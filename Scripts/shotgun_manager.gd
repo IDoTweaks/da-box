@@ -5,6 +5,7 @@ extends Node3D
 @export var spread : float
 @export var reach : float
 @export var dmg: int
+@export var hitMask : int
 @export var start : Node3D
 
 # Called when the node enters the scene tree for the first time.
@@ -12,6 +13,7 @@ func _ready() -> void:
 	raysManager.bullets = bullets
 	raysManager.reach = reach
 	raysManager.spread = spread
+	raysManager.hitMask = hitMask
 	raysManager._createRays()
 	raysManager._randomizeRays()
 

@@ -4,6 +4,8 @@ const MOUSE_SENSITIVITY = 0.003
 const SPEED = 5
 const DEAFULTFOV = 75.0
 
+var kbMult = 1
+
 var forcesX : Array
 var forcesY : Array
 var forcesZ : Array
@@ -11,21 +13,25 @@ var forceTime : Array
 var forceDecay : Array
 var onCd = false
 var inAir = false
+var lookedAt = null
 
 @export var explosionFallOff := 1.5
 @export var deafualtShotgunForce := 25.0
 @export var deafultTime := 1
 @export var friction := 10.0
 @export var maxSpeed := 40.0
+@export var health := 100.0
 
 @onready var shotgunSfx =$shotgunSfx
 @onready var landSfx = $landSfx
 
+@onready var guiCanvas = $GUI
 @onready var shotgunManager =$playerCam/shotgunManager
 @onready var feet = $feet
 @onready var shotgunEnd = $playerCam/shotGun/shotgunEnd
 @onready var shotgun = $playerCam/shotGun
 @onready var ray = $playerCam/RayCast3D
+@onready var lookRay = $playerCam/lookRay
 @onready var playerCam: Camera3D = $playerCam
 @onready var shotgunCd = $shotgunCd
 @onready var rayEnd = $playerCam/rayEnd
@@ -107,7 +113,7 @@ func _fireShotgun() -> void:
 	temp.emitting = true
 	
 	shotgunManager._shoot()
-	_applyImpulse(point,global_position - point, deafualtShotgunForce)
+	_applyImpulse(point,global_position - point, deafualtShotgunForce * kbMult)
 
 func _applyForceDecay(i,delta):
 	forcesX[i] = move_toward(forcesX[i], 0, forceDecay[i] * delta)
@@ -124,10 +130,11 @@ func _applyImpulse(point,dir : Vector3, strength):
 		velocity -= n * opp
 	strength -= (global_position.distance_to(point) * explosionFallOff)
 	strength = max(strength,5.0)
-	velocity += n * strength
+	velocity += n * strength * kbMult
 	
 
 func _physics_process(delta: float) -> void:
+	_updateLookedAt()
 	if Input.is_action_just_pressed("leftClick") and not onCd:
 		_fireShotgun()
 		onCd = true
@@ -167,6 +174,41 @@ func _physics_process(delta: float) -> void:
 	velocity = velocity.limit_length(maxSpeed)
 	move_and_slide()
 
+func _updateLookedAt():
+	lookRay.force_raycast_update()
+	var hit = lookRay.get_collider() if lookRay.is_colliding() else null
+	if hit != null and not hit.has_method("_showHealthBar"):
+		hit = null
+	if hit == lookedAt:
+		return
+	if is_instance_valid(lookedAt):
+		lookedAt._hideHealthBar()
+	lookedAt = hit
+	if lookedAt != null:
+		lookedAt._showHealthBar()
+
+func _explosionDamage(point,damage):
+	var amount = damage
+	amount -= global_position.distance_to(point) * explosionFallOff
+	_updateGui()
+	if amount > 0:
+		_damage(amount)
+
+func _damage(amount):
+	health -= amount
+	_updateGui()
+	if health <= 0:
+		_die()
+
+func _updateGui():
+	guiCanvas.health = health
+	guiCanvas._update()
+
+func _getGravity():
+	return get_gravity()
+
+func _die():
+	queue_free()
 
 func _on_shotgun_cd_timeout() -> void:
 	onCd = false

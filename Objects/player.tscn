@@ -5,6 +5,8 @@
 [ext_resource type="AudioStream" uid="uid://bhbxv4fhybq6t" path="res://sfx/fireshotgun.wav" id="3_2i4gt"]
 [ext_resource type="AudioStream" uid="uid://teful8u5ky3l" path="res://sfx/landSfx.wav" id="4_0ad8t"]
 [ext_resource type="PackedScene" uid="uid://dy13o62wv6bn0" path="res://Objects/shotgun_manager.tscn" id="5_x20fu"]
+[ext_resource type="PackedScene" uid="uid://dmijitrof0kmm" path="res://Objects/gui.tscn" id="6_0ar0x"]
+[ext_resource type="Script" uid="uid://bhf3pubiaesmw" path="res://Scripts/upgrade_manager.gd" id="7_slvmq"]
 
 [sub_resource type="BoxMesh" id="BoxMesh_3y5cq"]
 size = Vector3(0.01, 0.01, 0.01)
@@ -28,9 +30,10 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.53849196, -0.20830381)
 [node name="shotgunManager" parent="playerCam" unique_id=429371704 node_paths=PackedStringArray("start") instance=ExtResource("5_x20fu")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.006330192, -0.89754426)
 bullets = 20
-spread = 2.0
-reach = 10.0
+spread = 6.0
+reach = 30.0
 dmg = 5
+hitMask = 5
 start = NodePath("../shotGun/shotgunEnd")
 
 [node name="shotGun" parent="playerCam" unique_id=412888752 instance=ExtResource("1_y0qk3")]
@@ -41,6 +44,10 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.29620868, 0.17857563, 0)
 
 [node name="RayCast3D" type="RayCast3D" parent="playerCam" unique_id=1988810625]
 target_position = Vector3(0, 0, -5)
+
+[node name="lookRay" type="RayCast3D" parent="playerCam" unique_id=1988810626]
+target_position = Vector3(0, 0, -40)
+collision_mask = 5
 
 [node name="rayEnd" type="MeshInstance3D" parent="playerCam" unique_id=598920199]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -4.9915795)
@@ -65,5 +72,10 @@ stream = ExtResource("4_0ad8t")
 
 [node name="feet" type="Node3D" parent="." unique_id=1242261167]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.9, 0)
+
+[node name="GUI" parent="." unique_id=1918774894 instance=ExtResource("6_0ar0x")]
+
+[node name="UpgradeManager" type="Node3D" parent="." unique_id=505694052]
+script = ExtResource("7_slvmq")
 
 [connection signal="timeout" from="shotgunCd" to="." method="_on_shotgun_cd_timeout"]
