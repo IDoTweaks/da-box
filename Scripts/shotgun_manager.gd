@@ -30,21 +30,24 @@ func _shoot():
 	for ray : RayCast3D in rays:
 		ray.force_raycast_update()
 		ray.start = start.global_position
-		ray._summonBullet()
 		var blocked = ray.is_colliding()
+		var from = ray.global_position
+		var end = ray.to_global(ray.target_position)
+		var dir = (end - from).normalized()
+		var stop = ray.get_collision_point() if blocked else end
+		var done = false
 		if blocked:
 			var hitObj = ray.get_collider()
 			if hitObj.has_method("_damage"):
 				hitObj._damage(dmg)
 				hits += 1
-				continue
-		if cluster == null:
-			continue
-		var from = ray.global_position
-		var end = ray.to_global(ray.target_position)
-		var maxDist = from.distance_to(ray.get_collision_point()) if blocked else from.distance_to(end)
-		if cluster._pelletHit(from, (end - from).normalized(), maxDist, dmg):
-			hits += 1
+				done = true
+		if not done and cluster != null:
+			var t = cluster._pelletHit(from, dir, from.distance_to(stop), dmg)
+			if t > 0:
+				hits += 1
+				stop = from + dir * t
+		ray._summonBullet(stop)
 	return hits
 
 

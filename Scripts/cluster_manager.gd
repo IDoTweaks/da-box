@@ -18,6 +18,11 @@ extends Node3D
 @export var virtStride := 2
 @export var virtSepPush := 1.2
 @export var floorY := -1.0
+@export var targetRadiusMult := .5
+@export var bodyRadiusPad := 1.15
+@export var walkCycle := 9.0
+@export var walkBob := .08
+@export var walkSway := .1
 
 var globalFireTimer := 0.0
 var enemies : Array = []
@@ -28,6 +33,8 @@ var grid : Dictionary = {}
 var baseAngle := 0.0
 var repathCursor := 0
 var frameCount := 0
+var targetRadius := 0.0
+var bodyRadius := 0.0
 
 var virtPos : PackedVector3Array
 var virtHealth : PackedFloat32Array
@@ -76,6 +83,7 @@ func _register(enemy):
 	for key in DEAFULTS:
 		stats[key] = _stat(enemy,key)
 
+	var model = enemy.get_node_or_null("model")
 	var rays := {}
 	if stats["flying"]:
 		for key in ["up","dwn", "forward", "backward", "right", "left"]:
@@ -95,7 +103,9 @@ func _register(enemy):
 		"windUp" : -1.0,
 		"avoid" : Vector3.ZERO,
 		"fireRangeSq" : stats["fireRange"] * stats["fireRange"],
-		"poolType" : -1
+		"poolType" : -1,
+		"model" : model,
+		"modelRest" : model.transform if model != null else Transform3D()
 	}
 
 func _unRegister(enemy):
@@ -210,9 +220,9 @@ func _virtDie(i):
 	vfx.global_position = virtPos[i]
 	virtHealth[i] = 0
 
-func _pelletHit(from : Vector3, dir : Vector3, maxDist : float, dmg) -> bool:
+func _pelletHit(from : Vector3, dir : Vector3, maxDist : float, dmg) -> float:
 	if virtPos.is_empty():
-		return false
+		return -1.0
 	var bestI = -1
 	var bestT = INF
 	var seen := {}
@@ -240,16 +250,17 @@ func _pelletHit(from : Vector3, dir : Vector3, maxDist : float, dmg) -> bool:
 						bestT = t
 						bestI = idx
 	if bestI == -1:
-		return false
+		return -1.0
 	virtHealth[bestI] -= dmg
 	if virtHealth[bestI] <= 0:
 		_virtDie(bestI)
-	return true
+	return bestT
 
 func _moveVirtuals(delta):
 	if virtPos.is_empty():
 		return
 	var tpos = target.global_position
+	var stop = .5 + bodyRadius
 	for i in virtPos.size():
 		if (i + frameCount) % virtStride != 0:
 			continue
@@ -262,7 +273,9 @@ func _moveVirtuals(delta):
 			goal.y = pos.y
 		var dir = goal - pos
 		var d = dir.length()
-		if d < .5:
+		if d < stop:
+			if d < bodyRadius and d > .01:
+				virtPos[i] = pos - dir / d * t["speed"] * delta * virtStride
 			continue
 		pos += dir / d * t["speed"] * delta * virtStride
 		var cell = _virtCell(pos)
@@ -391,11 +404,11 @@ func _buildSlotDirs(count:int):
 		slotDirs.append(Vector3(cos(angle),0,sin(angle)))
 
 func _ringPoint(enemy,slotIndex) -> Vector3:
-	return target.global_position + slotDirs[slotIndex] * data[enemy]["stats"]["ringRadius"]
+	return target.global_position + slotDirs[slotIndex] * (data[enemy]["stats"]["ringRadius"] + targetRadius)
 
 func _slotPoint(enemy,slotIndex) -> Vector3:
 	var s = data[enemy]["stats"]
-	var point = target.global_position + slotDirs[slotIndex] * s["ringRadius"]
+	var point = target.global_position + slotDirs[slotIndex] * (s["ringRadius"] + targetRadius)
 	if s["flying"]:
 		point.y = target.global_position.y + s["hoverHeight"]
 		return point
@@ -477,9 +490,15 @@ func _updateShooting(delta):
 				_fire(enemy)
 			continue
 		d["nextFire"] -=delta
-		if d["nextFire"] > 0 or globalFireTimer >0 or d["state"] != "attack" or enemy.global_position.distance_squared_to(tpos) > d["fireRangeSq"]:
+		if d["nextFire"] > 0 or globalFireTimer >0 or d["state"] != "attack":
 			continue
 		var s = d["stats"]
+		var off = tpos - enemy.global_position
+		if not s["flying"]:
+			off.y = 0
+		var reach = s["fireRange"] + targetRadius
+		if off.length_squared() > reach * reach:
+			continue
 		if s["needsLineOfSight"] and !_hasLineOfSight(enemy):
 			continue
 		globalFireTimer = globalFireInterval
@@ -583,9 +602,18 @@ func _moveEnemy(enemy,delta):
 	var d = data[enemy]
 	var s = d["stats"]
 	var dir = Vector3.ZERO
-	var arrived = d["state"] == "attack" and enemy.global_position.distance_squared_to(target.global_position) <= s["attackRange"] * s["attackRange"]
+	var toT = target.global_position - enemy.global_position
+	if not s["flying"]:
+		toT.y = 0
+	var flatSq = toT.length_squared()
+	var reach = s["attackRange"] + targetRadius
+	var arrived = d["state"] == "attack" and flatSq <= reach * reach
+	var inside = not s["flying"] and flatSq < bodyRadius * bodyRadius
 
-	if !arrived:
+	if inside:
+		if flatSq > .0001:
+			dir = -toT / sqrt(flatSq)
+	elif !arrived:
 		if d["idx"] < d["path"].size():
 			var toWaypoint = d["path"][d["idx"]] - enemy.global_position
 			if not s["flying"]:
@@ -595,13 +623,10 @@ func _moveEnemy(enemy,delta):
 			else:
 				dir = toWaypoint.normalized()
 		else:
-			var toTarget = target.global_position - enemy.global_position
-			if not s["flying"]:
-				toTarget.y = 0
-			if toTarget.length() > .01:
-				dir = toTarget.normalized()
+			if flatSq > .0001:
+				dir = toT / sqrt(flatSq)
 
-	var desired = dir * s["moveSpeed"] + _seperation(enemy)
+	var desired = dir * s["moveSpeed"] + (Vector3.ZERO if inside else _seperation(enemy))
 
 	if s["flying"]:
 		desired += d["avoid"] * s["avoidStrength"] *s["moveSpeed"]
@@ -622,11 +647,18 @@ func _moveEnemy(enemy,delta):
 			enemy.velocity.y = 0
 	enemy.move_and_slide()
 
+	var model = d["model"]
+	if model != null and not s["flying"]:
+		d["phase"] += delta * walkCycle * Vector2(enemy.velocity.x,enemy.velocity.z).length() / s["moveSpeed"]
+		var ph = sin(d["phase"])
+		var rest = d["modelRest"]
+		model.transform = Transform3D(rest.basis.rotated(Vector3.BACK,ph * walkSway),rest.origin + Vector3(0,absf(ph) * walkBob,0))
+
 	var look = target.global_position
 	if not s["flying"]:
 		look.y = enemy.global_position.y
 	if enemy.global_position.distance_to(look) > .1:
-		var wanted = enemy.global_transform.looking_at(look,Vector3.UP)
+		var wanted = enemy.global_transform.looking_at(look,Vector3.UP,true)
 		enemy.global_transform.basis = enemy.global_transform.basis.slerp(wanted.basis, clamp(s["turnSpeed"] * delta,0,1))
 
 func _rayClearance(ray: RayCast3D)-> float:
@@ -667,6 +699,10 @@ func _physics_process(delta: float) -> void:
 			data.erase(gone)
 
 	frameCount += 1
+	var ts = target.get("size")
+	var tsize = ts if ts != null else 1.0
+	targetRadius = max(tsize - 1.0,0.0) * targetRadiusMult
+	bodyRadius = tsize * targetRadiusMult * bodyRadiusPad
 	_compactVirtuals()
 	_buildVirtGrid()
 	_moveVirtuals(delta)

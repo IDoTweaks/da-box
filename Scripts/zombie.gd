@@ -63,7 +63,9 @@ func _spawnVfx():
 	vfx.global_position = global_position
 
 func _attack(targ):
-	if global_position.distance_to(targ.global_position) > fireRange:
+	var off = targ.global_position - global_position
+	off.y = 0
+	if off.length() > fireRange + clusterManager.targetRadius:
 		return
 	if targ.has_method("_damage"):
 		targ._damage(dmg)

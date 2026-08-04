@@ -7,12 +7,12 @@ var start
 func _ready() -> void:
 	pass # Replace with function body.
 
-func _summonBullet():
-	var end = to_global(target_position)
+func _summonBullet(end):
 	var newBullet = bullet.instantiate()
 	get_tree().current_scene.add_child(newBullet)
 	newBullet.global_position = start
-	newBullet.look_at(end)
+	if start.distance_to(end) > .01:
+		newBullet.look_at(end)
 	var t = create_tween()
 	t.tween_property(newBullet,"global_position",end,.1)
 	t.tween_callback(newBullet.queue_free)

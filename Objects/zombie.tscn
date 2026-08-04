@@ -1,16 +1,9 @@
 [gd_scene format=3]
 
 [ext_resource type="Script" path="res://Scripts/zombie.gd" id="1_zomb"]
+[ext_resource type="PackedScene" path="res://models/geometry_zombie.glb" id="2_zomb"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_zomb"]
-radius = 0.4
-height = 1.8
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_zomb"]
-albedo_color = Color(0.36078432, 0.54901963, 0.32156864, 1)
-
-[sub_resource type="CapsuleMesh" id="CapsuleMesh_zomb"]
-material = SubResource("StandardMaterial3D_zomb")
 radius = 0.4
 height = 1.8
 
@@ -18,10 +11,9 @@ height = 1.8
 collision_layer = 4
 script = ExtResource("1_zomb")
 
+[node name="model" parent="." instance=ExtResource("2_zomb")]
+transform = Transform3D(1.04, 0, 0, 0, 1.04, 0, 0, 0, 1.04, 0, 0, 0)
+
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
 shape = SubResource("CapsuleShape3D_zomb")
-
-[node name="placeholderMesh" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
-mesh = SubResource("CapsuleMesh_zomb")

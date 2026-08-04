@@ -1,0 +1,139 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://Scripts/card_screen.gd" id="1_card"]
+
+[node name="cardScreen" type="CanvasLayer"]
+process_mode = 3
+layer = 10
+visible = false
+script = ExtResource("1_card")
+
+[node name="dim" type="ColorRect" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.6)
+
+[node name="title" type="Label" parent="dim"]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -250.0
+offset_top = 90.0
+offset_right = 250.0
+offset_bottom = 150.0
+grow_horizontal = 2
+theme_override_font_sizes/font_size = 44
+text = "wave"
+horizontal_alignment = 1
+
+[node name="row" type="HBoxContainer" parent="dim"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -422.0
+offset_top = -180.0
+offset_right = 422.0
+offset_bottom = 180.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 32
+
+[node name="card0" type="Button" parent="dim/row"]
+custom_minimum_size = Vector2(260, 360)
+layout_mode = 2
+
+[node name="text" type="VBoxContainer" parent="dim/row/card0"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 16.0
+offset_top = 16.0
+offset_right = -16.0
+offset_bottom = -16.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_constants/separation = 16
+
+[node name="cardTitle" type="Label" parent="dim/row/card0/text"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 26
+text = "card"
+horizontal_alignment = 1
+
+[node name="cardDesc" type="Label" parent="dim/row/card0/text"]
+layout_mode = 2
+size_flags_vertical = 3
+text = "desc"
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="card1" type="Button" parent="dim/row"]
+custom_minimum_size = Vector2(260, 360)
+layout_mode = 2
+
+[node name="text" type="VBoxContainer" parent="dim/row/card1"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 16.0
+offset_top = 16.0
+offset_right = -16.0
+offset_bottom = -16.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_constants/separation = 16
+
+[node name="cardTitle" type="Label" parent="dim/row/card1/text"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 26
+text = "card"
+horizontal_alignment = 1
+
+[node name="cardDesc" type="Label" parent="dim/row/card1/text"]
+layout_mode = 2
+size_flags_vertical = 3
+text = "desc"
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="card2" type="Button" parent="dim/row"]
+custom_minimum_size = Vector2(260, 360)
+layout_mode = 2
+
+[node name="text" type="VBoxContainer" parent="dim/row/card2"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 16.0
+offset_top = 16.0
+offset_right = -16.0
+offset_bottom = -16.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_constants/separation = 16
+
+[node name="cardTitle" type="Label" parent="dim/row/card2/text"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 26
+text = "card"
+horizontal_alignment = 1
+
+[node name="cardDesc" type="Label" parent="dim/row/card2/text"]
+layout_mode = 2
+size_flags_vertical = 3
+text = "desc"
+horizontal_alignment = 1
+autowrap_mode = 3

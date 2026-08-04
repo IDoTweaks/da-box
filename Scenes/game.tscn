@@ -3,6 +3,7 @@
 [ext_resource type="PackedScene" uid="uid://ck24c7fcw7g75" path="res://Objects/player.tscn" id="1_qxrlw"]
 [ext_resource type="PackedScene" uid="uid://4oor6jdy5b22" path="res://Objects/clusterManager.tscn" id="2_qxrlw"]
 [ext_resource type="PackedScene" path="res://Objects/waveManager.tscn" id="5_wave"]
+[ext_resource type="PackedScene" path="res://Objects/cardScreen.tscn" id="6_card"]
 
 [sub_resource type="Environment" id="Environment_qxrlw"]
 background_mode = 1
@@ -119,6 +120,8 @@ target = NodePath("../player")
 [node name="waveManager" parent="." node_paths=PackedStringArray("target", "clusterManager") instance=ExtResource("5_wave")]
 target = NodePath("../player")
 clusterManager = NodePath("../ClusterManager")
+
+[node name="cardScreen" parent="." instance=ExtResource("6_card")]
 
 [node name="NavigationRegion3D" type="NavigationRegion3D" parent="." unique_id=1898132346]
 transform = Transform3D(203.84999, 0, 0, 0, 0.99999994, 0, 0, 0, 283.24844, 0, -1, 0)

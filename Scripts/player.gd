@@ -14,6 +14,8 @@ var forceDecay : Array
 var onCd = false
 var inAir = false
 var lookedAt = null
+var shotgunRest : Vector3
+var sizeTween = null
 
 @export var explosionFallOff := 1.5
 @export var deafualtShotgunForce := 25.0
@@ -21,6 +23,10 @@ var lookedAt = null
 @export var friction := 10.0
 @export var maxSpeed := 40.0
 @export var health := 100.0
+@export var size := 1.0
+@export var debugSizeStep := .1
+@export var sizeTime := .25
+@export var kbSizeFalloff := 1.0
 
 @onready var shotgunSfx =$shotgunSfx
 @onready var landSfx = $landSfx
@@ -42,6 +48,25 @@ var lookedAt = null
 func _ready() -> void:
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 	playerCam.fov = DEAFULTFOV
+	shotgunRest = shotgun.position
+	_applySize(size)
+
+func _setSize(v):
+	if sizeTween != null:
+		sizeTween.kill()
+	sizeTween = create_tween()
+	sizeTween.set_ease(Tween.EASE_OUT)
+	sizeTween.set_trans(Tween.TRANS_BACK)
+	sizeTween.tween_method(_applySize,size,v,sizeTime)
+
+func _applySize(v):
+	size = v
+	scale = Vector3.ONE * size
+	shotgun.scale = Vector3.ONE * size
+	shotgun.position = shotgunRest * size
+
+func _kbSize():
+	return 1.0 / pow(size,kbSizeFalloff)
 
 
 func _applyForceFromPoint(point, force, time,decay = 0):
@@ -88,6 +113,12 @@ func _unhandled_input(event: InputEvent) -> void:
 		playerCam.rotate_x(-event.relative.y * MOUSE_SENSITIVITY)
 		playerCam.rotation.x = clamp(playerCam.rotation.x, deg_to_rad(-89.0), deg_to_rad(89.0))
 	
+	if event is InputEventMouseButton and event.pressed:
+		if event.button_index == MOUSE_BUTTON_WHEEL_UP:
+			_setSize(size + debugSizeStep)
+		if event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
+			_setSize(max(size - debugSizeStep,debugSizeStep))
+
 	if event.is_action_pressed("ui_cancel"):
 		if Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
 			Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
@@ -132,7 +163,7 @@ func _applyImpulse(point,dir : Vector3, strength):
 		velocity -= n * opp
 	strength -= (global_position.distance_to(point) * explosionFallOff)
 	strength = max(strength,5.0)
-	velocity += n * strength * kbMult
+	velocity += n * strength * kbMult * _kbSize()
 	
 
 func _physics_process(delta: float) -> void:

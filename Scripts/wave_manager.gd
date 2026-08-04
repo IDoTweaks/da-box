@@ -6,6 +6,8 @@ var spawnTimer = 0.0
 var toSpawn = 0
 var bossesToSpawn = 0
 var running = false
+var choosing = false
+var cardScreen = null
 var tiers = []
 var groundTiers = []
 var flyTiers = []
@@ -78,6 +80,19 @@ func _start():
 
 func _stop():
 	running = false
+
+func _endWave():
+	if cardScreen == null:
+		cardScreen = get_tree().get_first_node_in_group("cardScreen")
+	if cardScreen == null:
+		_nextWave()
+		return
+	choosing = true
+	cardScreen._open(self,waveNumber + 1)
+
+func _onCardPicked():
+	choosing = false
+	_nextWave()
 
 func _nextWave():
 	waveNumber += 1
@@ -193,11 +208,11 @@ func _spawnBatch():
 		toSpawn -= 1
 
 func _physics_process(delta: float) -> void:
-	if not running or target == null or clusterManager == null:
+	if not running or choosing or target == null or clusterManager == null:
 		return
 	waveTimer -= delta
 	if waveTimer <= 0:
-		_nextWave()
+		_endWave()
 	if not _hasTier(bossLevel):
 		bossesToSpawn = 0
 	if toSpawn <= 0 and bossesToSpawn <= 0:

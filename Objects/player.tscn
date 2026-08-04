@@ -76,7 +76,9 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.9, 0)
 
 [node name="GUI" parent="." unique_id=1918774894 instance=ExtResource("6_0ar0x")]
 
-[node name="UpgradeManager" type="Node3D" parent="." unique_id=505694052]
+[node name="UpgradeManager" type="Node3D" parent="." unique_id=505694052 node_paths=PackedStringArray("player", "shotgunManager")]
 script = ExtResource("7_slvmq")
+player = NodePath("..")
+shotgunManager = NodePath("../playerCam/shotgunManager")
 
 [connection signal="timeout" from="shotgunCd" to="." method="_on_shotgun_cd_timeout"]
