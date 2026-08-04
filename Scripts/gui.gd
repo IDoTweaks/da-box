@@ -3,6 +3,9 @@ var health = 100
 
 @onready var healthBar = $ProgressBar
 @onready var hitMarker = $hitMarker
+@onready var debugLabel = $debugLabel
+
+var waves = null
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -23,4 +26,8 @@ func _hideHitMarker():
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
-	pass
+	if waves == null:
+		waves = get_tree().get_first_node_in_group("waveManager")
+		if waves == null:
+			return
+	debugLabel.text = str(Engine.get_frames_per_second()) + " fps\nwave " + str(waves.waveNumber)

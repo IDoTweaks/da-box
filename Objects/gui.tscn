@@ -5,6 +5,12 @@
 [node name="GUI" type="CanvasLayer" unique_id=1918774894]
 script = ExtResource("1_on31g")
 
+[node name="debugLabel" type="Label" parent="." unique_id=509790567]
+offset_left = 8.0
+offset_top = 8.0
+offset_right = 200.0
+offset_bottom = 80.0
+
 [node name="hitMarker" type="Control" parent="." unique_id=509790562]
 visible = false
 anchors_preset = 8

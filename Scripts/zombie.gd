@@ -2,7 +2,10 @@ extends CharacterBody3D
 
 var maxHealth
 var dead := false
+var healthBar = null
+var healthFill = null
 
+@export var level := 1
 @export var moveSpeed := 4.5
 @export var acceleration := 10.0
 @export var turnSpeed := 8.0
@@ -18,20 +21,20 @@ var dead := false
 @export var windUp := .45
 @export var needsLineOfSight := false
 @export var dmg := 12
+@export var hitRadius := .9
+@export var barHeight := 2.15
 @export var clusterManager : Node3D
 @export var health = 150
 
-@onready var healthBar = $healthBar
-@onready var healthFill = $healthBar/fill
 @onready var explosionVfx = preload("res://particles/explosionVfx.tscn")
+@onready var healthBarScene = preload("res://Objects/healthBar.tscn")
 
 func _ready() -> void:
+	set_process(false)
 	maxHealth = health
-	healthBar.visible = false
-	_updateHealthBar()
 	clusterManager._register(self)
 
-func _damage(amount : int) -> void:
+func _damage(amount) -> void:
 	if dead:
 		return
 	health -= amount
@@ -44,8 +47,14 @@ func _die():
 		return
 	dead = true
 	_spawnVfx()
-	clusterManager._unRegister(self)
-	queue_free()
+	clusterManager._despawn(self)
+
+func _reset():
+	dead = false
+	health = maxHealth
+	velocity = Vector3.ZERO
+	_hideHealthBar()
+	_updateHealthBar()
 
 func _spawnVfx():
 	var vfx = explosionVfx.instantiate()
@@ -64,19 +73,30 @@ func _telegraph(duration):
 	pass
 
 func _showHealthBar():
+	if healthBar == null:
+		healthBar = healthBarScene.instantiate()
+		add_child(healthBar)
+		healthBar.position.y = barHeight
+		healthFill = healthBar.get_node("fill")
+		_updateHealthBar()
 	healthBar.visible = true
+	set_process(true)
 
 func _hideHealthBar():
-	healthBar.visible = false
+	if healthBar != null:
+		healthBar.visible = false
+	set_process(false)
 
 func _updateHealthBar():
+	if healthFill == null:
+		return
 	var ratio = maxf(float(health) / maxHealth, .001)
 	var w = healthFill.mesh.size.x
 	healthFill.scale.x = ratio
 	healthFill.position.x = -(w * (1 - ratio)) / 2
 
 func _process(delta: float) -> void:
-	if not healthBar.visible:
+	if healthBar == null or not healthBar.visible:
 		return
 	var cam = get_viewport().get_camera_3d()
 	if cam == null:

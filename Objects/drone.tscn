@@ -15,22 +15,6 @@ material = SubResource("StandardMaterial3D_j8ubb")
 [sub_resource type="BoxMesh" id="BoxMesh_yeay5"]
 size = Vector3(0.1, 0.1, 0.1)
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_hbbg"]
-shading_mode = 0
-albedo_color = Color(0.08, 0.08, 0.08, 1)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_hbfill"]
-shading_mode = 0
-albedo_color = Color(0.85, 0.16, 0.16, 1)
-
-[sub_resource type="QuadMesh" id="QuadMesh_hbbg"]
-material = SubResource("StandardMaterial3D_hbbg")
-size = Vector2(1.2, 0.14)
-
-[sub_resource type="QuadMesh" id="QuadMesh_hbfill"]
-material = SubResource("StandardMaterial3D_hbfill")
-size = Vector2(1.2, 0.14)
-
 [node name="Drone" type="CharacterBody3D" unique_id=458966374]
 collision_layer = 4
 script = ExtResource("1_edmjf")
@@ -67,15 +51,3 @@ mesh = SubResource("BoxMesh_isdyx")
 [node name="launchPoint" type="MeshInstance3D" parent="." unique_id=220554749]
 transform = Transform3D(0.10800001, 0, 0, 0, -4.371137e-09, 0.22999991, 0, -0.09999996, -1.0053616e-08, 0, -0.1773605, 0)
 mesh = SubResource("BoxMesh_yeay5")
-
-[node name="healthBar" type="Node3D" parent="." unique_id=1044213377]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.72, 0)
-
-[node name="bg" type="MeshInstance3D" parent="healthBar" unique_id=1044213378]
-cast_shadow = 0
-mesh = SubResource("QuadMesh_hbbg")
-
-[node name="fill" type="MeshInstance3D" parent="healthBar" unique_id=1044213379]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.005)
-cast_shadow = 0
-mesh = SubResource("QuadMesh_hbfill")
