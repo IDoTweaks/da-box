@@ -23,6 +23,14 @@ extends Node3D
 @export var walkCycle := 9.0
 @export var walkBob := .08
 @export var walkSway := .1
+@export var riseTime := 1.3
+@export var riseDepth := 2.4
+@export var riseTilt := .9
+@export var riseLurch := 14.0
+@export var riseWobble := .35
+@export var assembleTime := .8
+@export var assembleSpin := 9.0
+@export var assembleDrop := 2.0
 
 var globalFireTimer := 0.0
 var enemies : Array = []
@@ -40,6 +48,7 @@ var virtPos : PackedVector3Array
 var virtHealth : PackedFloat32Array
 var virtMax : PackedFloat32Array
 var virtType : PackedInt32Array
+var virtSpawn : PackedFloat32Array
 var virtTypes : Array = []
 var virtGrid : Dictionary = {}
 var pools : Array = []
@@ -163,7 +172,8 @@ func _registerType(scene) -> int:
 		"flying": _stat(temp,"flying"),
 		"hover": _stat(temp,"hoverHeight"),
 		"hitRadius": temp.get("hitRadius") if temp.get("hitRadius") != null else .9,
-		"maxHealth": float(temp.get("health") if temp.get("health") != null else 100)
+		"maxHealth": float(temp.get("health") if temp.get("health") != null else 100),
+		"spawnTime": assembleTime if _stat(temp,"flying") else riseTime
 	}
 	temp.free()
 	virtTypes.append(t)
@@ -179,11 +189,12 @@ func _registerType(scene) -> int:
 	mmis.append(mmi)
 	return virtTypes.size() - 1
 
-func _spawnVirtual(typeIdx, pos : Vector3, health : float):
+func _spawnVirtual(typeIdx, pos : Vector3, health : float, anim = 1.0):
 	virtPos.append(pos)
 	virtHealth.append(health)
 	virtMax.append(health)
 	virtType.append(typeIdx)
+	virtSpawn.append(anim)
 
 func _totalAlive():
 	return enemies.size() + virtPos.size()
@@ -208,10 +219,12 @@ func _compactVirtuals():
 		virtHealth[i] = virtHealth[last]
 		virtMax[i] = virtMax[last]
 		virtType[i] = virtType[last]
+		virtSpawn[i] = virtSpawn[last]
 		virtPos.resize(last)
 		virtHealth.resize(last)
 		virtMax.resize(last)
 		virtType.resize(last)
+		virtSpawn.resize(last)
 
 func _virtDie(i):
 	var vfx = load("res://particles/explosionVfx.tscn").instantiate()
@@ -239,7 +252,7 @@ func _pelletHit(from : Vector3, dir : Vector3, maxDist : float, dmg) -> float:
 					if seen.has(idx):
 						continue
 					seen[idx] = true
-					if idx >= virtHealth.size() or virtHealth[idx] <= 0:
+					if idx >= virtHealth.size() or virtHealth[idx] <= 0 or virtSpawn[idx] > 0:
 						continue
 					var rel = virtPos[idx] - from
 					var t = rel.dot(dir)
@@ -265,6 +278,9 @@ func _moveVirtuals(delta):
 		if (i + frameCount) % virtStride != 0:
 			continue
 		var t = virtTypes[virtType[i]]
+		if virtSpawn[i] > 0:
+			virtSpawn[i] = maxf(virtSpawn[i] - delta * virtStride / t["spawnTime"], 0.0)
+			continue
 		var pos = virtPos[i]
 		var goal = tpos
 		if t["flying"]:
@@ -307,7 +323,19 @@ func _updateMultimesh():
 		var t = virtTypes[ti]
 		var toTarget = target.global_position - virtPos[i]
 		var yaw = atan2(toTarget.x, toTarget.z)
-		var xf = Transform3D(Basis(Vector3.UP, yaw), virtPos[i]) * t["meshXform"]
+		var pos = virtPos[i]
+		var s = virtSpawn[i]
+		var basis = Basis(Vector3.UP, yaw)
+		if s > 0:
+			if t["flying"]:
+				var k = 1 - s
+				basis = Basis(Vector3.UP, yaw + s * s * assembleSpin).scaled(Vector3.ONE * k * k * (3 - 2 * k))
+				pos.y += s * s * assembleDrop
+			else:
+				basis = Basis(Vector3.UP, yaw + sin(s * riseLurch * .6) * riseWobble)
+				basis = basis.rotated(basis.x, s * riseTilt + sin(s * riseLurch) * riseWobble * s)
+				pos.y -= s * riseDepth
+		var xf = Transform3D(basis, pos) * t["meshXform"]
 		mmis[ti].multimesh.set_instance_transform(counts[ti], xf)
 		counts[ti] += 1
 	for ti in virtTypes.size():
@@ -320,7 +348,7 @@ func _promoteTick():
 	var cands := []
 	var tpos = target.global_position
 	for i in virtPos.size():
-		if virtHealth[i] <= 0:
+		if virtHealth[i] <= 0 or virtSpawn[i] > 0:
 			continue
 		var d2 = virtPos[i].distance_squared_to(tpos)
 		if d2 < pd2:
@@ -351,10 +379,12 @@ func _promote(i):
 	virtHealth[i] = virtHealth[last]
 	virtMax[i] = virtMax[last]
 	virtType[i] = virtType[last]
+	virtSpawn[i] = virtSpawn[last]
 	virtPos.resize(last)
 	virtHealth.resize(last)
 	virtMax.resize(last)
 	virtType.resize(last)
+	virtSpawn.resize(last)
 
 func _takeBody(typeIdx):
 	var body
@@ -379,7 +409,7 @@ func _demoteTick():
 			continue
 		if enemy.global_position.distance_squared_to(tpos) <= dd2:
 			continue
-		_spawnVirtual(d["poolType"], enemy.global_position, enemy.health)
+		_spawnVirtual(d["poolType"], enemy.global_position, enemy.health, 0.0)
 		virtMax[virtMax.size() - 1] = enemy.maxHealth
 		_despawn(enemy)
 
