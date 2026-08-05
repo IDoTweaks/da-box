@@ -1,7 +1,10 @@
 extends CanvasLayer
 var health = 100
 
-@onready var healthBar = $ProgressBar
+@export var maxHealth := 100.0
+
+@onready var healthBar = $healthBar
+@onready var healthValue = $healthBar/value
 @onready var hitMarker = $hitMarker
 @onready var debugLabel = $debugLabel
 
@@ -12,7 +15,9 @@ func _ready() -> void:
 	_update()
 
 func _update():
+	healthBar.max_value = maxHealth
 	healthBar.value = health
+	healthValue.text = str(int(round(max(health,0.0))))
 
 func _hitMarker():
 	hitMarker.visible = true
