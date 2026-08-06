@@ -5,28 +5,35 @@ var dead := false
 var healthBar = null
 var healthFill = null
 
-@export var level := 1
-@export var moveSpeed := 4.5
-@export var acceleration := 10.0
-@export var turnSpeed := 8.0
-@export var flying := false
-@export var ringRadius := 4.0
-@export var seperationRadius := 1.8
+@export var level := 4
+@export var moveSpeed := 9.0
+@export var acceleration := 30.0
+@export var turnSpeed := 6.0
+@export var flying := true
+@export var diving := true
+@export var hoverHeight := 12.0
+@export var ringRadius := 10.0
+@export var diveSpeed := 26.0
+@export var climbSpeed := 14.0
+@export var diveRest := 1.5
+@export var seperationRadius := 2.0
 @export var seperationStrength := 4.0
-@export var waypointToTolerance := .6
-@export var attackRange := 1.8
-@export var attackPriority := 1.0
-@export var fireCooldown := 1.5
-@export var fireRange := 2.5
-@export var windUp := .45
-@export var needsLineOfSight := false
-@export var dmg := 12
-@export var hitRadius := .9
-@export var hitHeight := .9
-@export var barHeight := 2.15
+@export var attackRange := 2.5
+@export var avoidStrength := 2.0
+@export var fireRange := 4.0
+@export var dmg := 5
+@export var hitRadius := 1.0
+@export var hitHeight := 0.0
+@export var barHeight := .6
 @export var clusterManager : Node3D
-@export var health = 150
+@export var health = 80
 
+@onready var up = $up
+@onready var dwn = $dwn
+@onready var forward = $forward
+@onready var backward = $backward
+@onready var right = $right
+@onready var left = $left
 @onready var explosionVfx = preload("res://particles/explosionVfx.tscn")
 @onready var healthBarScene = preload("res://Objects/healthBar.tscn")
 
@@ -65,14 +72,12 @@ func _spawnVfx():
 
 func _attack(targ):
 	var off = targ.global_position - global_position
-	off.y = 0
 	if off.length() > fireRange + clusterManager.targetRadius:
 		return
 	if targ.has_method("_damage"):
 		targ._damage(dmg)
 
 func _telegraph(duration):
-	#add here a growl
 	pass
 
 func _showHealthBar():

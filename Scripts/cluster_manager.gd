@@ -31,6 +31,9 @@ extends Node3D
 @export var assembleTime := .8
 @export var assembleSpin := 9.0
 @export var assembleDrop := 2.0
+@export var hawkDiveInterval := 4.0
+@export var hawkGroupSize := 5
+@export var hawkStagger := .12
 
 var globalFireTimer := 0.0
 var enemies : Array = []
@@ -41,6 +44,7 @@ var grid : Dictionary = {}
 var baseAngle := 0.0
 var repathCursor := 0
 var frameCount := 0
+var hawkTimer := 0.0
 var targetRadius := 0.0
 var bodyRadius := 0.0
 
@@ -53,6 +57,8 @@ var virtTypes : Array = []
 var virtGrid : Dictionary = {}
 var pools : Array = []
 var mmis : Array = []
+var mms : Array = []
+var virtCounts : Array = []
 
 const DEAFULTS := {
 	"moveSpeed":4.0,
@@ -75,7 +81,13 @@ const DEAFULTS := {
 	"fireRange":40.0,
 	"windUp":.5,
 	"needsLineOfSight":true,
+	"diving":false,
+	"diveSpeed":24.0,
+	"climbSpeed":12.0,
+	"diveRest":1.5,
 }
+
+@onready var explosionVfx = preload("res://particles/explosionVfx.tscn")
 
 func _ready() -> void:
 	add_to_group("clusterManager")
@@ -113,6 +125,9 @@ func _register(enemy):
 		"avoid" : Vector3.ZERO,
 		"fireRangeSq" : stats["fireRange"] * stats["fireRange"],
 		"poolType" : -1,
+		"angle" : randf() * TAU,
+		"diveTimer" : 0.0,
+		"divePoint" : Vector3.ZERO,
 		"model" : model,
 		"modelRest" : model.transform if model != null else Transform3D()
 	}
@@ -171,7 +186,9 @@ func _registerType(scene) -> int:
 		"speed": _stat(temp,"moveSpeed"),
 		"flying": _stat(temp,"flying"),
 		"hover": _stat(temp,"hoverHeight"),
+		"orbit": _stat(temp,"ringRadius") if _stat(temp,"diving") else 0.0,
 		"hitRadius": temp.get("hitRadius") if temp.get("hitRadius") != null else .9,
+		"hitY": temp.get("hitHeight") if temp.get("hitHeight") != null else 0.0,
 		"maxHealth": float(temp.get("health") if temp.get("health") != null else 100),
 		"spawnTime": assembleTime if _stat(temp,"flying") else riseTime
 	}
@@ -181,12 +198,16 @@ func _registerType(scene) -> int:
 	var mm = MultiMesh.new()
 	mm.transform_format = MultiMesh.TRANSFORM_3D
 	mm.mesh = mesh
-	mm.instance_count = 5000
+	mm.instance_count = 0
 	mm.visible_instance_count = 0
 	var mmi = MultiMeshInstance3D.new()
 	mmi.multimesh = mm
+	mmi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	mmi.custom_aabb = AABB(Vector3(-160,-10,-160),Vector3(320,80,320))
 	add_child(mmi)
 	mmis.append(mmi)
+	mms.append(mm)
+	virtCounts.append(0)
 	return virtTypes.size() - 1
 
 func _spawnVirtual(typeIdx, pos : Vector3, health : float, anim = 1.0):
@@ -227,7 +248,7 @@ func _compactVirtuals():
 		virtSpawn.resize(last)
 
 func _virtDie(i):
-	var vfx = load("res://particles/explosionVfx.tscn").instantiate()
+	var vfx = explosionVfx.instantiate()
 	vfx.size = .5
 	get_tree().current_scene.add_child(vfx)
 	vfx.global_position = virtPos[i]
@@ -254,12 +275,15 @@ func _pelletHit(from : Vector3, dir : Vector3, maxDist : float, dmg) -> float:
 					seen[idx] = true
 					if idx >= virtHealth.size() or virtHealth[idx] <= 0 or virtSpawn[idx] > 0:
 						continue
-					var rel = virtPos[idx] - from
+					var vt = virtTypes[virtType[idx]]
+					var center = virtPos[idx]
+					center.y += vt["hitY"]
+					var rel = center - from
 					var t = rel.dot(dir)
 					if t < 0 or t > maxDist:
 						continue
-					var r = virtTypes[virtType[idx]]["hitRadius"]
-					if (from + dir * t).distance_squared_to(virtPos[idx]) <= r * r and t < bestT:
+					var r = vt["hitRadius"]
+					if (from + dir * t).distance_squared_to(center) <= r * r and t < bestT:
 						bestT = t
 						bestI = idx
 	if bestI == -1:
@@ -285,6 +309,13 @@ func _moveVirtuals(delta):
 		var goal = tpos
 		if t["flying"]:
 			goal.y = tpos.y + t["hover"]
+			if t["orbit"] > 0:
+				var outX = pos.x - tpos.x
+				var outZ = pos.z - tpos.z
+				var outLen = sqrt(outX * outX + outZ * outZ)
+				if outLen > .01:
+					goal.x = tpos.x + outX / outLen * t["orbit"]
+					goal.z = tpos.z + outZ / outLen * t["orbit"]
 		else:
 			goal.y = pos.y
 		var dir = goal - pos
@@ -315,9 +346,15 @@ func _moveVirtuals(delta):
 		virtPos[i] = pos
 
 func _updateMultimesh():
-	var counts := []
-	counts.resize(virtTypes.size())
-	counts.fill(0)
+	virtCounts.fill(0)
+	for i in virtType.size():
+		virtCounts[virtType[i]] += 1
+	for ti in virtTypes.size():
+		var mm = mms[ti]
+		if virtCounts[ti] > mm.instance_count:
+			mm.instance_count = virtCounts[ti] + 512
+		mm.visible_instance_count = virtCounts[ti]
+		virtCounts[ti] = 0
 	for i in virtPos.size():
 		var ti = virtType[i]
 		var t = virtTypes[ti]
@@ -336,10 +373,8 @@ func _updateMultimesh():
 				basis = basis.rotated(basis.x, s * riseTilt + sin(s * riseLurch) * riseWobble * s)
 				pos.y -= s * riseDepth
 		var xf = Transform3D(basis, pos) * t["meshXform"]
-		mmis[ti].multimesh.set_instance_transform(counts[ti], xf)
-		counts[ti] += 1
-	for ti in virtTypes.size():
-		mmis[ti].multimesh.visible_instance_count = counts[ti]
+		mms[ti].set_instance_transform(virtCounts[ti], xf)
+		virtCounts[ti] += 1
 
 func _promoteTick():
 	if virtPos.is_empty() or enemies.size() >= maxBodies:
@@ -453,6 +488,8 @@ func _assignSlots():
 	var count = slotDirs.size()
 	var step = TAU / count
 	for enemy in enemies:
+		if data[enemy]["stats"]["diving"]:
+			continue
 		var offset = enemy.global_position - target.global_position
 		var want = int(round((atan2(offset.z, offset.x) - baseAngle) / step))
 		var best = -1
@@ -474,13 +511,15 @@ func _assignSlots():
 
 func _assignRoles():
 	for enemy in enemies:
+		if data[enemy]["stats"]["diving"]:
+			continue
 		data[enemy]["state"] = "circle"
 	var picked := []
 	for n in maxAttackers:
 		var best = null
 		var bestCost = INF
 		for enemy in enemies:
-			if enemy in picked:
+			if enemy in picked or data[enemy]["stats"]["diving"]:
 				continue
 			var cost = enemy.global_position.distance_to(target.global_position) - data[enemy]["stats"]["attackPriority"]
 			if cost < bestCost:
@@ -490,6 +529,38 @@ func _assignRoles():
 			break
 		picked.append(best)
 		data[best]["state"] = "attack"
+
+func _hawkRoles():
+	hawkTimer -= tickRate
+	if hawkTimer > 0:
+		return
+	var flock := []
+	for enemy in enemies:
+		var d = data[enemy]
+		if not d["stats"]["diving"] or d["state"] != "circle" or d["diveTimer"] > 0:
+			continue
+		flock.append(enemy)
+	if flock.is_empty():
+		return
+	hawkTimer = hawkDiveInterval
+	var point = target.global_position
+	var leadAngle = data[flock[randi() % flock.size()]]["angle"]
+	for n in hawkGroupSize:
+		var best = null
+		var bestDiff = INF
+		for enemy in flock:
+			var d = data[enemy]
+			if d["state"] != "circle":
+				continue
+			var diff = absf(angle_difference(d["angle"],leadAngle))
+			if diff < bestDiff:
+				bestDiff = diff
+				best = enemy
+		if best == null:
+			return
+		data[best]["state"] = "dive"
+		data[best]["diveTimer"] = n * hawkStagger
+		data[best]["divePoint"] = point
 
 func _hasLineOfSight(enemy) ->bool:
 	var space = get_world_3d().direct_space_state
@@ -628,9 +699,53 @@ func _seperation(enemy)-> Vector3:
 					push += away.normalized() * (1 - dist / s["seperationRadius"])
 	return push * s["seperationStrength"]
 
+func _hawkOrbit(d,s,delta) -> Vector3:
+	var radius = s["ringRadius"] + targetRadius
+	d["angle"] += delta * s["moveSpeed"] / radius
+	var point = target.global_position + Vector3(cos(d["angle"]),0,sin(d["angle"])) * radius
+	point.y = target.global_position.y + s["hoverHeight"]
+	return point
+
+func _moveHawk(enemy,d,s,delta):
+	var tpos = target.global_position
+	var goal = _hawkOrbit(d,s,delta)
+	var speed = s["moveSpeed"]
+	if d["diveTimer"] > 0:
+		d["diveTimer"] -= delta
+	if d["state"] == "dive" and d["diveTimer"] <= 0:
+		goal = d["divePoint"]
+		speed = s["diveSpeed"]
+		var reach = s["attackRange"] + targetRadius
+		if enemy.global_position.distance_squared_to(tpos) <= reach * reach:
+			_fire(enemy)
+			d["state"] = "climb"
+		elif enemy.global_position.y <= goal.y + .2:
+			d["state"] = "climb"
+	elif d["state"] == "climb":
+		speed = s["climbSpeed"]
+		if enemy.global_position.y >= tpos.y + s["hoverHeight"] - 1.5:
+			d["state"] = "circle"
+			d["diveTimer"] = s["diveRest"]
+
+	var dir = goal - enemy.global_position
+	var dist = dir.length()
+	if dist > .01:
+		dir /= dist
+	else:
+		dir = Vector3.ZERO
+	var desired = dir * speed + _seperation(enemy) + d["avoid"] * s["avoidStrength"] * speed
+	enemy.velocity = enemy.velocity.move_toward(desired, s["acceleration"] * delta)
+	enemy.move_and_slide()
+	if Vector2(enemy.velocity.x,enemy.velocity.z).length_squared() > 1.0:
+		var wanted = enemy.global_transform.looking_at(enemy.global_position + enemy.velocity,Vector3.UP,true)
+		enemy.global_transform.basis = enemy.global_transform.basis.slerp(wanted.basis, clamp(s["turnSpeed"] * delta,0,1))
+
 func _moveEnemy(enemy,delta):
 	var d = data[enemy]
 	var s = d["stats"]
+	if s["diving"]:
+		_moveHawk(enemy,d,s,delta)
+		return
 	var dir = Vector3.ZERO
 	var toT = target.global_position - enemy.global_position
 	if not s["flying"]:
@@ -744,6 +859,7 @@ func _physics_process(delta: float) -> void:
 		_promoteTick()
 		_demoteTick()
 		_assignRoles()
+		_hawkRoles()
 		_assignSlots()
 		_updateAvoidance()
 		_repath()

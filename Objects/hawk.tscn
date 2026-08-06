@@ -1,0 +1,55 @@
+[gd_scene format=3 uid="uid://ct68u7krytw27"]
+
+[ext_resource type="Script" uid="uid://cn8je6mc5e0xg" path="res://Scripts/hawk.gd" id="1_hawk"]
+[ext_resource type="PackedScene" uid="uid://innkl3ok6gcu" path="res://models/falcao.glb" id="2_m8gwt"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_hawkOut"]
+cull_mode = 1
+shading_mode = 0
+albedo_color = Color(0.05, 0.04, 0.06, 1)
+grow = true
+grow_amount = 0.06
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_hawk"]
+next_pass = SubResource("StandardMaterial3D_hawkOut")
+albedo_color = Color(0.72, 0.2, 0.22, 1)
+
+[sub_resource type="PrismMesh" id="PrismMesh_hawk"]
+material = SubResource("StandardMaterial3D_hawk")
+size = Vector3(1.8, 1.3, 0.18)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_hawk"]
+size = Vector3(1.8, 0.3, 1.3)
+
+[node name="Hawk" type="CharacterBody3D" unique_id=1045034016]
+collision_layer = 4
+script = ExtResource("1_hawk")
+
+[node name="model" type="MeshInstance3D" parent="." unique_id=747996973]
+transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, 0, 0, 0)
+visible = false
+mesh = SubResource("PrismMesh_hawk")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=617836776]
+shape = SubResource("BoxShape3D_hawk")
+
+[node name="up" type="RayCast3D" parent="." unique_id=1880690568]
+target_position = Vector3(0, 3, 0)
+
+[node name="dwn" type="RayCast3D" parent="." unique_id=244286921]
+target_position = Vector3(0, -3, 0)
+
+[node name="forward" type="RayCast3D" parent="." unique_id=1989989259]
+target_position = Vector3(0, 0, -3)
+
+[node name="backward" type="RayCast3D" parent="." unique_id=12772237]
+target_position = Vector3(0, 0, 3)
+
+[node name="right" type="RayCast3D" parent="." unique_id=1413151376]
+target_position = Vector3(3, 0, 0)
+
+[node name="left" type="RayCast3D" parent="." unique_id=971950255]
+target_position = Vector3(-3, 0, 0)
+
+[node name="Sketchfab_Scene2" parent="." unique_id=1081001509 instance=ExtResource("2_m8gwt")]
+transform = Transform3D(-3.445823, 0, 3.179885e-07, 0, 2.1299984, 0, -3.012434e-07, 0, -3.6373646, -0.04401961, -0.29716644, 0)

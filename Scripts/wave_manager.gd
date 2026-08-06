@@ -28,6 +28,7 @@ var flyTotal = 0.0
 @export var level5 : Array[PackedScene] = []
 @export var level6 : Array[PackedScene] = []
 
+@export var testing := false
 @export var autoStart := true
 @export var waveTime := 25.0
 @export var baseCount := 4
@@ -53,7 +54,7 @@ func _ready() -> void:
 	tiers = [level1, level2, level3, level4, level5, level6]
 	_splitTiers()
 	_rebuildLevels()
-	if autoStart:
+	if autoStart and not testing:
 		_start()
 
 func _splitTiers():
@@ -208,14 +209,14 @@ func _spawnBatch():
 		toSpawn -= 1
 
 func _physics_process(delta: float) -> void:
-	if not running or choosing or target == null or clusterManager == null:
+	if testing or not running or choosing or target == null or clusterManager == null:
 		return
-	waveTimer -= delta
-	if waveTimer <= 0:
-		_endWave()
 	if not _hasTier(bossLevel):
 		bossesToSpawn = 0
+	waveTimer -= delta
 	if toSpawn <= 0 and bossesToSpawn <= 0:
+		if waveTimer <= 0 and _aliveCount() <= 0:
+			_endWave()
 		return
 	spawnTimer -= delta
 	if spawnTimer > 0:

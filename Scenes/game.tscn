@@ -4,12 +4,12 @@
 [ext_resource type="PackedScene" uid="uid://4oor6jdy5b22" path="res://Objects/clusterManager.tscn" id="2_qxrlw"]
 [ext_resource type="PackedScene" path="res://Objects/waveManager.tscn" id="5_wave"]
 [ext_resource type="PackedScene" path="res://Objects/cardScreen.tscn" id="6_card"]
-[ext_resource type="Shader" path="res://shaders/gridWorld.gdshader" id="7_grid"]
+[ext_resource type="PackedScene" path="res://Objects/hawk.tscn" id="6_i6g32"]
+[ext_resource type="Shader" uid="uid://bsfy5upklry81" path="res://shaders/gridWorld.gdshader" id="7_grid"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_box"]
 sky_top_color = Color(0.5019608, 0.6156863, 0.7882353, 1)
 sky_horizon_color = Color(0.9411765, 0.9529412, 0.972549, 1)
-sky_curve = 0.15
 sky_energy_multiplier = 1.15
 ground_bottom_color = Color(0.827451, 0.84313726, 0.8862745, 1)
 ground_horizon_color = Color(0.9411765, 0.9529412, 0.972549, 1)
@@ -34,7 +34,6 @@ ssao_enabled = true
 ssao_radius = 2.0
 ssao_intensity = 3.2
 ssao_power = 1.8
-ssil_enabled = false
 sdfgi_enabled = true
 glow_enabled = true
 glow_intensity = 0.35
@@ -65,6 +64,12 @@ shader_parameter/fadeEnd = 220.0
 shader_parameter/surfaceRoughness = 0.32
 shader_parameter/heightTint = 0.0
 
+[sub_resource type="BoxMesh" id="BoxMesh_floor"]
+size = Vector3(300, 4, 300)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_floor"]
+size = Vector3(300, 4, 300)
+
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_wall"]
 render_priority = 0
 shader = ExtResource("7_grid")
@@ -82,6 +87,18 @@ shader_parameter/fadeEnd = 300.0
 shader_parameter/surfaceRoughness = 0.6
 shader_parameter/heightTint = 0.012
 
+[sub_resource type="BoxMesh" id="BoxMesh_wallX"]
+size = Vector3(4, 50, 304)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_wallX"]
+size = Vector3(4, 50, 304)
+
+[sub_resource type="BoxMesh" id="BoxMesh_wallZ"]
+size = Vector3(304, 50, 4)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_wallZ"]
+size = Vector3(304, 50, 4)
+
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_roof"]
 render_priority = 0
 shader = ExtResource("7_grid")
@@ -98,24 +115,6 @@ shader_parameter/fadeStart = 120.0
 shader_parameter/fadeEnd = 340.0
 shader_parameter/surfaceRoughness = 0.75
 shader_parameter/heightTint = 0.0
-
-[sub_resource type="BoxMesh" id="BoxMesh_floor"]
-size = Vector3(300, 4, 300)
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_floor"]
-size = Vector3(300, 4, 300)
-
-[sub_resource type="BoxMesh" id="BoxMesh_wallX"]
-size = Vector3(4, 50, 304)
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_wallX"]
-size = Vector3(4, 50, 304)
-
-[sub_resource type="BoxMesh" id="BoxMesh_wallZ"]
-size = Vector3(304, 50, 4)
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_wallZ"]
-size = Vector3(304, 50, 4)
 
 [sub_resource type="BoxMesh" id="BoxMesh_roof"]
 size = Vector3(304, 4, 304)
@@ -145,79 +144,148 @@ shadow_normal_bias = 1.5
 shadow_blur = 1.4
 directional_shadow_max_distance = 90.0
 
-[node name="arena" type="Node3D" parent="."]
+[node name="arena" type="Node3D" parent="." unique_id=1561282040]
 
-[node name="floor" type="StaticBody3D" parent="arena"]
+[node name="floor" type="StaticBody3D" parent="arena" unique_id=1803988152]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -3, 0)
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="arena/floor"]
+[node name="MeshInstance3D" type="MeshInstance3D" parent="arena/floor" unique_id=1478276991]
 material_override = SubResource("ShaderMaterial_floor")
 mesh = SubResource("BoxMesh_floor")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="arena/floor"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="arena/floor" unique_id=806693313]
 shape = SubResource("BoxShape3D_floor")
 
-[node name="wallEast" type="StaticBody3D" parent="arena"]
+[node name="wallEast" type="StaticBody3D" parent="arena" unique_id=64126191]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 152, 24, 0)
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="arena/wallEast"]
+[node name="MeshInstance3D" type="MeshInstance3D" parent="arena/wallEast" unique_id=620346577]
 material_override = SubResource("ShaderMaterial_wall")
 mesh = SubResource("BoxMesh_wallX")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="arena/wallEast"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="arena/wallEast" unique_id=1271252906]
 shape = SubResource("BoxShape3D_wallX")
 
-[node name="wallWest" type="StaticBody3D" parent="arena"]
+[node name="wallWest" type="StaticBody3D" parent="arena" unique_id=1381979510]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -152, 24, 0)
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="arena/wallWest"]
+[node name="MeshInstance3D" type="MeshInstance3D" parent="arena/wallWest" unique_id=2121045312]
 material_override = SubResource("ShaderMaterial_wall")
 mesh = SubResource("BoxMesh_wallX")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="arena/wallWest"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="arena/wallWest" unique_id=1351964903]
 shape = SubResource("BoxShape3D_wallX")
 
-[node name="wallNorth" type="StaticBody3D" parent="arena"]
+[node name="wallNorth" type="StaticBody3D" parent="arena" unique_id=205507736]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 24, -152)
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="arena/wallNorth"]
+[node name="MeshInstance3D" type="MeshInstance3D" parent="arena/wallNorth" unique_id=834638541]
 material_override = SubResource("ShaderMaterial_wall")
 mesh = SubResource("BoxMesh_wallZ")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="arena/wallNorth"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="arena/wallNorth" unique_id=2031373839]
 shape = SubResource("BoxShape3D_wallZ")
 
-[node name="wallSouth" type="StaticBody3D" parent="arena"]
+[node name="wallSouth" type="StaticBody3D" parent="arena" unique_id=240106406]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 24, 152)
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="arena/wallSouth"]
+[node name="MeshInstance3D" type="MeshInstance3D" parent="arena/wallSouth" unique_id=1085224807]
 material_override = SubResource("ShaderMaterial_wall")
 mesh = SubResource("BoxMesh_wallZ")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="arena/wallSouth"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="arena/wallSouth" unique_id=808922081]
 shape = SubResource("BoxShape3D_wallZ")
 
-[node name="roof" type="StaticBody3D" parent="arena"]
+[node name="roof" type="StaticBody3D" parent="arena" unique_id=1712564380]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 51, 0)
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="arena/roof"]
+[node name="MeshInstance3D" type="MeshInstance3D" parent="arena/roof" unique_id=107524113]
 material_override = SubResource("ShaderMaterial_roof")
 cast_shadow = 0
 gi_mode = 0
 mesh = SubResource("BoxMesh_roof")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="arena/roof"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="arena/roof" unique_id=1325581355]
 shape = SubResource("BoxShape3D_roof")
 
 [node name="ClusterManager" parent="." unique_id=1558638358 node_paths=PackedStringArray("target") instance=ExtResource("2_qxrlw")]
 target = NodePath("../player")
 
-[node name="waveManager" parent="." node_paths=PackedStringArray("target", "clusterManager") instance=ExtResource("5_wave")]
+[node name="waveManager" parent="." unique_id=223766283 node_paths=PackedStringArray("target", "clusterManager") instance=ExtResource("5_wave")]
 target = NodePath("../player")
 clusterManager = NodePath("../ClusterManager")
+testing = true
 
-[node name="cardScreen" parent="." instance=ExtResource("6_card")]
+[node name="cardScreen" parent="." unique_id=1889281573 instance=ExtResource("6_card")]
 
 [node name="NavigationRegion3D" type="NavigationRegion3D" parent="." unique_id=1898132346]
 transform = Transform3D(150, 0, 0, 0, 1, 0, 0, 0, 150, 0, -1, 0)
 navigation_mesh = SubResource("NavigationMesh_wrm1d")
+
+[node name="Hawk" parent="." unique_id=1937443202 node_paths=PackedStringArray("clusterManager") instance=ExtResource("6_i6g32")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 1, -13)
+clusterManager = NodePath("../ClusterManager")
+
+[node name="Hawk2" parent="." unique_id=2122676150 node_paths=PackedStringArray("clusterManager") instance=ExtResource("6_i6g32")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 1, -13)
+clusterManager = NodePath("../ClusterManager")
+
+[node name="Hawk3" parent="." unique_id=887600562 node_paths=PackedStringArray("clusterManager") instance=ExtResource("6_i6g32")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 1, -13)
+clusterManager = NodePath("../ClusterManager")
+
+[node name="Hawk4" parent="." unique_id=1334514638 node_paths=PackedStringArray("clusterManager") instance=ExtResource("6_i6g32")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 1, -13)
+clusterManager = NodePath("../ClusterManager")
+
+[node name="Hawk5" parent="." unique_id=1558538830 node_paths=PackedStringArray("clusterManager") instance=ExtResource("6_i6g32")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 1, -13)
+clusterManager = NodePath("../ClusterManager")
+
+[node name="Hawk6" parent="." unique_id=837516394 node_paths=PackedStringArray("clusterManager") instance=ExtResource("6_i6g32")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 1, -13)
+clusterManager = NodePath("../ClusterManager")
+
+[node name="Hawk7" parent="." unique_id=948901240 node_paths=PackedStringArray("clusterManager") instance=ExtResource("6_i6g32")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 1, -13)
+clusterManager = NodePath("../ClusterManager")
+
+[node name="Hawk8" parent="." unique_id=305150570 node_paths=PackedStringArray("clusterManager") instance=ExtResource("6_i6g32")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 1, -13)
+clusterManager = NodePath("../ClusterManager")
+
+[node name="Hawk9" parent="." unique_id=1648709272 node_paths=PackedStringArray("clusterManager") instance=ExtResource("6_i6g32")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 1, -13)
+clusterManager = NodePath("../ClusterManager")
+
+[node name="Hawk10" parent="." unique_id=1152094780 node_paths=PackedStringArray("clusterManager") instance=ExtResource("6_i6g32")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 1, -13)
+clusterManager = NodePath("../ClusterManager")
+
+[node name="Hawk11" parent="." unique_id=766180427 node_paths=PackedStringArray("clusterManager") instance=ExtResource("6_i6g32")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 1, -13)
+clusterManager = NodePath("../ClusterManager")
+
+[node name="Hawk12" parent="." unique_id=1686418115 node_paths=PackedStringArray("clusterManager") instance=ExtResource("6_i6g32")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 1, -13)
+clusterManager = NodePath("../ClusterManager")
+
+[node name="Hawk13" parent="." unique_id=1623448763 node_paths=PackedStringArray("clusterManager") instance=ExtResource("6_i6g32")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 1, -13)
+clusterManager = NodePath("../ClusterManager")
+
+[node name="Hawk14" parent="." unique_id=2004534186 node_paths=PackedStringArray("clusterManager") instance=ExtResource("6_i6g32")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 1, -13)
+clusterManager = NodePath("../ClusterManager")
+
+[node name="Hawk15" parent="." unique_id=2078262705 node_paths=PackedStringArray("clusterManager") instance=ExtResource("6_i6g32")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 1, -13)
+clusterManager = NodePath("../ClusterManager")
+
+[node name="Hawk16" parent="." unique_id=584920942 node_paths=PackedStringArray("clusterManager") instance=ExtResource("6_i6g32")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 1, -13)
+clusterManager = NodePath("../ClusterManager")
+
+[node name="Hawk17" parent="." unique_id=1660331966 node_paths=PackedStringArray("clusterManager") instance=ExtResource("6_i6g32")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 1, -13)
+clusterManager = NodePath("../ClusterManager")

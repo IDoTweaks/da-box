@@ -48,6 +48,7 @@ offset_right = 200.0
 offset_bottom = 80.0
 
 [node name="crosshair" type="Control" parent="."]
+mouse_filter = 2
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
@@ -55,6 +56,7 @@ anchor_right = 0.5
 anchor_bottom = 0.5
 
 [node name="up" type="Panel" parent="crosshair"]
+mouse_filter = 2
 offset_left = -3.0
 offset_top = -19.0
 offset_right = 3.0
@@ -62,6 +64,7 @@ offset_bottom = -5.0
 theme_override_styles/panel = SubResource("StyleBoxFlat_crosshair")
 
 [node name="dwn" type="Panel" parent="crosshair"]
+mouse_filter = 2
 offset_left = -3.0
 offset_top = 5.0
 offset_right = 3.0
@@ -69,6 +72,7 @@ offset_bottom = 19.0
 theme_override_styles/panel = SubResource("StyleBoxFlat_crosshair")
 
 [node name="right" type="Panel" parent="crosshair"]
+mouse_filter = 2
 offset_left = 5.0
 offset_top = -3.0
 offset_right = 19.0
@@ -76,6 +80,7 @@ offset_bottom = 3.0
 theme_override_styles/panel = SubResource("StyleBoxFlat_crosshair")
 
 [node name="left" type="Panel" parent="crosshair"]
+mouse_filter = 2
 offset_left = -19.0
 offset_top = -3.0
 offset_right = -5.0
@@ -83,6 +88,7 @@ offset_bottom = 3.0
 theme_override_styles/panel = SubResource("StyleBoxFlat_crosshair")
 
 [node name="dot" type="Panel" parent="crosshair"]
+mouse_filter = 2
 offset_left = -3.0
 offset_top = -3.0
 offset_right = 3.0
@@ -90,6 +96,7 @@ offset_bottom = 3.0
 theme_override_styles/panel = SubResource("StyleBoxFlat_crosshair")
 
 [node name="hitMarker" type="Control" parent="." unique_id=509790562]
+mouse_filter = 2
 visible = false
 anchors_preset = 8
 anchor_left = 0.5
@@ -99,6 +106,7 @@ anchor_bottom = 0.5
 rotation = 0.7853982
 
 [node name="up" type="Panel" parent="hitMarker" unique_id=509790563]
+mouse_filter = 2
 offset_left = -3.0
 offset_top = -26.0
 offset_right = 3.0
@@ -106,6 +114,7 @@ offset_bottom = -12.0
 theme_override_styles/panel = SubResource("StyleBoxFlat_hitMarker")
 
 [node name="dwn" type="Panel" parent="hitMarker" unique_id=509790564]
+mouse_filter = 2
 offset_left = -3.0
 offset_top = 12.0
 offset_right = 3.0
@@ -113,6 +122,7 @@ offset_bottom = 26.0
 theme_override_styles/panel = SubResource("StyleBoxFlat_hitMarker")
 
 [node name="right" type="Panel" parent="hitMarker" unique_id=509790565]
+mouse_filter = 2
 offset_left = 12.0
 offset_top = -3.0
 offset_right = 26.0
@@ -120,6 +130,7 @@ offset_bottom = 3.0
 theme_override_styles/panel = SubResource("StyleBoxFlat_hitMarker")
 
 [node name="left" type="Panel" parent="hitMarker" unique_id=509790566]
+mouse_filter = 2
 offset_left = -26.0
 offset_top = -3.0
 offset_right = -12.0

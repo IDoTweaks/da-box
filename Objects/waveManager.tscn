@@ -3,12 +3,13 @@
 [ext_resource type="Script" path="res://Scripts/wave_manager.gd" id="1_wave"]
 [ext_resource type="PackedScene" path="res://Objects/zombie.tscn" id="2_wave"]
 [ext_resource type="PackedScene" path="res://Objects/drone.tscn" id="3_wave"]
+[ext_resource type="PackedScene" path="res://Objects/hawk.tscn" id="4_wave"]
 
 [node name="waveManager" type="Node3D"]
 script = ExtResource("1_wave")
 level1 = Array[PackedScene]([ExtResource("2_wave")])
 level2 = Array[PackedScene]([ExtResource("2_wave")])
 level3 = Array[PackedScene]([ExtResource("3_wave")])
-level4 = Array[PackedScene]([ExtResource("2_wave"), ExtResource("3_wave")])
-level5 = Array[PackedScene]([ExtResource("2_wave"), ExtResource("3_wave")])
+level4 = Array[PackedScene]([ExtResource("2_wave"), ExtResource("3_wave"), ExtResource("4_wave")])
+level5 = Array[PackedScene]([ExtResource("2_wave"), ExtResource("3_wave"), ExtResource("4_wave")])
 level6 = Array[PackedScene]([ExtResource("2_wave"), ExtResource("3_wave")])
