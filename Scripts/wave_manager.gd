@@ -215,7 +215,7 @@ func _physics_process(delta: float) -> void:
 		bossesToSpawn = 0
 	waveTimer -= delta
 	if toSpawn <= 0 and bossesToSpawn <= 0:
-		if waveTimer <= 0 and _aliveCount() <= 0:
+		if _aliveCount() <= 0:
 			_endWave()
 		return
 	spawnTimer -= delta

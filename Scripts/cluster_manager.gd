@@ -901,6 +901,7 @@ func _physics_process(delta: float) -> void:
 		tickTimer = tickRate
 		_promoteTick()
 		_demoteTick()
+		_buildVirtGrid()
 		_assignRoles()
 		_hawkRoles()
 		_assignSlots()
