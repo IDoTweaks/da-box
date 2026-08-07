@@ -29,6 +29,7 @@ var sizeTween = null
 @export var sizeTime := .25
 @export var kbSizeFalloff := 1.0
 @export var minShotgunCd:= .1
+@export var gravityMult := 1.0
 
 @onready var shotgunSfx =$shotgunSfx
 @onready var landSfx = $landSfx
@@ -185,7 +186,7 @@ func _physics_process(delta: float) -> void:
 		temp.emitting = true
 	
 	if not is_on_floor():
-		velocity += get_gravity() * delta
+		velocity += get_gravity() * delta * gravityMult
 		inAir = true
 	else:
 		inAir = false
@@ -242,7 +243,7 @@ func _updateGui():
 	guiCanvas._update()
 
 func _getGravity():
-	return get_gravity()
+	return get_gravity() * gravityMult
 
 func _die():
 	queue_free()

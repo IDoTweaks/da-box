@@ -22,7 +22,7 @@ func _noop():
 	pass
 
 func _astronautUpgrade():
-	player.gravity *= .5
+	player.gravityMult *= .5
 	return "decreases your gravity by 50%"
 
 func _punisherUpgrade():
@@ -35,6 +35,7 @@ func _rugUpgrade():
 
 func _triggerFingerUpgrade():
 	player._reduceCd(.75)
+	return "reduces your shotgun cooldown by 25%"
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
