@@ -3,10 +3,11 @@ extends CanvasLayer
 var cards = [
 	{"title":"big boy","desc":"increases your size by 25%","effect":"_bigBoyUpgrade"},
 	{"title":"titan","desc":"increases your size by 60%","effect":"_titanUpgrade"},
-	{"title":"placeholder c","desc":"does nothing yet","effect":"_noop"},
-	{"title":"placeholder d","desc":"does nothing yet","effect":"_noop"},
-	{"title":"placeholder e","desc":"does nothing yet","effect":"_noop"},
-	{"title":"placeholder f","desc":"does nothing yet","effect":"_noop"},
+	{"title":"birth control","desc":"lets you control how pregenant you are using the mouse wheel","effect":"_birthControlUpgrade"},
+	{"title":"astronaut","desc":"decreases your gravity by 50%","effect":"_astronautUpgrade"},
+	{"title":"punisher","desc":"increases damage by 50%","effect":"_punisherUpgrade"},
+	{"title":"rugdoll","desc":"increases knockback by 50%","effect":"_rugUpgrade"},
+	{"title":"trigger finger","desc":"reduces your shotgun cooldown by 25%","effect":"_triggerFingerUpgrade"},
 ]
 var shown = [0,0,0]
 var pool : Array = []

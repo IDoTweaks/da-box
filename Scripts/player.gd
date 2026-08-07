@@ -5,6 +5,7 @@ const SPEED = 5
 const DEAFULTFOV = 75.0
 
 var kbMult = 1
+var birthControl := false
 
 var forcesX : Array
 var forcesY : Array
@@ -27,6 +28,7 @@ var sizeTween = null
 @export var debugSizeStep := .1
 @export var sizeTime := .25
 @export var kbSizeFalloff := 1.0
+@export var minShotgunCd:= .5
 
 @onready var shotgunSfx =$shotgunSfx
 @onready var landSfx = $landSfx
@@ -68,6 +70,8 @@ func _applySize(v):
 func _kbSize():
 	return 1.0 / pow(size,kbSizeFalloff)
 
+func _reduceCd(mult):
+	shotgunCd.wait_time = max(shotgunCd.wait_time * mult,minShotgunCd)
 
 func _applyForceFromPoint(point, force, time,decay = 0):
 	#this math is brought to you by: gemini but i coded it:D
@@ -114,9 +118,9 @@ func _unhandled_input(event: InputEvent) -> void:
 		playerCam.rotation.x = clamp(playerCam.rotation.x, deg_to_rad(-89.0), deg_to_rad(89.0))
 	
 	if event is InputEventMouseButton and event.pressed:
-		if event.button_index == MOUSE_BUTTON_WHEEL_UP:
+		if event.button_index == MOUSE_BUTTON_WHEEL_UP and birthControl:
 			_setSize(size + debugSizeStep)
-		if event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
+		if event.button_index == MOUSE_BUTTON_WHEEL_DOWN and birthControl:
 			_setSize(max(size - debugSizeStep,debugSizeStep))
 
 	if event.is_action_pressed("ui_cancel"):
