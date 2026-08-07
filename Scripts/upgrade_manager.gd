@@ -2,9 +2,22 @@ extends Node3D
 @export var player : CharacterBody3D
 @export var shotgunManager : Node3D
 
+var roboCount := 0
+
+@onready var robuddy = preload("res://Objects/robuddy.tscn")
+
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	add_to_group("upgradeManager")
+
+func _robuddyUpgrade():
+	var temp = robuddy.instantiate()
+	temp.player = player
+	get_tree().current_scene.add_child(temp)
+	temp.global_position = player.global_position
+	temp.angle = roboCount * TAU / 3
+	roboCount += 1
+	return "i know you are bad at making friends... since i couldnt get a real human to agree to being your friend you get a robot!"
 
 func _bigBoyUpgrade():
 	player._setSize(player.size * 1.25)

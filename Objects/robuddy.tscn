@@ -1,0 +1,12 @@
+[gd_scene format=3 uid="uid://bi1drhhwyjn0g"]
+
+[ext_resource type="Script" uid="uid://dxmoyynsp4rvj" path="res://Scripts/robuddy.gd" id="1_vwlvn"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_5u0hp"]
+size = Vector3(0.4, 0.4, 0.4)
+
+[node name="Robuddy" type="Node3D" unique_id=1236527453]
+script = ExtResource("1_vwlvn")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=258796208]
+mesh = SubResource("BoxMesh_5u0hp")

@@ -293,6 +293,49 @@ func _pelletHit(from : Vector3, dir : Vector3, maxDist : float, dmg) -> float:
 		_virtDie(bestI)
 	return bestT
 
+func _damageVirtual(i,dmg):
+	virtHealth[i] -= dmg
+	if virtHealth[i] <= 0:
+		_virtDie(i)
+
+func _nearestBody(from: Vector3, maxDist: float):
+	var best = null
+	var bestDist = maxDist * maxDist
+	for enemy in enemies:
+		var dist = enemy.global_position.distance_squared_to(from)
+		if dist < bestDist:
+			bestDist = dist
+			best = enemy
+	return best
+	
+
+func _nearestVirtual(from: Vector3, maxDist: float):
+	if virtPos.is_empty():
+		return -1
+	var base = _virtCell(from)
+	var rings =int(maxDist/cellSize) + 1
+	var best = -1
+	var bestDist = maxDist * maxDist
+	for ring in rings:
+		for x in range(-ring,ring + 1):
+			for z in range(-ring,ring + 1):
+				if absi(x) != ring and absi(z) != ring:
+					continue
+				var cell = base + Vector2i(x,z)
+				if not virtGrid.has(cell):
+					continue
+				for idx in virtGrid[cell]:
+					if idx >= virtHealth.size() or virtHealth[idx] <= 0 or virtSpawn[idx] > 0:
+						continue
+					var dist = virtPos[idx].distance_squared_to(from)
+					if dist < bestDist:
+						bestDist = dist
+						best = idx
+		if best != -1:
+			return best
+	return best
+
+
 func _moveVirtuals(delta):
 	if virtPos.is_empty():
 		return

@@ -8,6 +8,7 @@ var cards = [
 	{"title":"punisher","desc":"increases damage by 50%","effect":"_punisherUpgrade"},
 	{"title":"rugdoll","desc":"increases knockback by 50%","effect":"_rugUpgrade"},
 	{"title":"trigger finger","desc":"reduces your shotgun cooldown by 25%","effect":"_triggerFingerUpgrade"},
+	{"title":"robuddy","desc":"i know you are bad at making friends... since i couldnt get a real human to agree to being your friend you get a robot!","effect":"_robuddyUpgrade"},
 ]
 var shown = [0,0,0]
 var pool : Array = []
