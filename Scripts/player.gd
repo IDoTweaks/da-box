@@ -28,7 +28,7 @@ var sizeTween = null
 @export var debugSizeStep := .1
 @export var sizeTime := .25
 @export var kbSizeFalloff := 1.0
-@export var minShotgunCd:= .5
+@export var minShotgunCd:= .1
 
 @onready var shotgunSfx =$shotgunSfx
 @onready var landSfx = $landSfx
