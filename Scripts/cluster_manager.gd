@@ -34,6 +34,9 @@ extends Node3D
 @export var hawkDiveInterval := 4.0
 @export var hawkGroupSize := 5
 @export var hawkStagger := .12
+@export var  bodyOnlyBelow := 80
+@export var  bodyOnlyMargin := 20
+@export var  bodyOnlyBudget := 32
 
 var globalFireTimer := 0.0
 var enemies : Array = []
@@ -50,6 +53,7 @@ var bodyRadius := 0.0
 var virtHitT := 0.0
 var virtBar
 var virtbarFill
+var bodyOnly := false
 
 var virtPos : PackedVector3Array
 var virtHealth : PackedFloat32Array
@@ -461,9 +465,30 @@ func _updateMultimesh():
 		mms[ti].set_instance_transform(virtCounts[ti], xf)
 		virtCounts[ti] += 1
 
+func _updateBodyOnly():
+	var total = _totalAlive()
+	if bodyOnly:
+		bodyOnly = total <= bodyOnlyBelow + bodyOnlyMargin
+	else:
+		bodyOnly = total <= bodyOnlyBelow
+
+func _promoteAll():
+	var budget = bodyOnlyBudget
+	for i in range(virtPos.size() - 1,-1,-1):
+		if budget <= 0 or enemies.size() >= maxBodies:
+			return
+		if virtHealth[i] <= 0 or virtSpawn[i] >= 0:
+			continue
+		_promote(i)
+		budget -= 1
+	
+
+
 func _promoteTick():
 	if virtPos.is_empty() or enemies.size() >= maxBodies:
 		return
+	if bodyOnly:
+		_promoteAll()
 	var pd2 = promoteDistance * promoteDistance
 	var cands := []
 	var tpos = target.global_position
@@ -520,6 +545,8 @@ func _takeBody(typeIdx):
 	return body
 
 func _demoteTick():
+	if bodyOnly:
+		return
 	var dd2 = demoteDistance * demoteDistance
 	var tpos = target.global_position
 	for i in range(enemies.size() - 1, -1, -1):
@@ -941,6 +968,7 @@ func _physics_process(delta: float) -> void:
 	tickTimer -= delta
 	if tickTimer <= 0:
 		tickTimer = tickRate
+		_updateBodyOnly()
 		_promoteTick()
 		_demoteTick()
 		_buildVirtGrid()
