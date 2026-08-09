@@ -1,13 +1,18 @@
 extends CanvasLayer
 
+
+#{"title":"","desc":"","effect":""},
 var cards = [
-	{"title":"big boy","desc":"increases your size by 25%","effect":"_bigBoyUpgrade"},
-	{"title":"titan","desc":"increases your size by 60%","effect":"_titanUpgrade"},
+	{"title":"advanced calculating","desc":"your robuddies can now calculate % and they are ADDICTED","effect":"_advancedCalcuklatingUpgrade", "robo":true},
+	{"title":"gold plated","desc":"your robuddies got a hardware grant and decided to stack them to get some gold plated parts","effect":"_goldPlatedUpgrade", "robo":true},
+	{"title":"evil ai","desc":"your robots decided to buy lots of fighting books and burn them! but at least they kill better YAYY","effect":"_evilAiUpgrade", "robo":true},
+	{"title":"big boy","desc":"stop breathing so much! you fucking inflated","effect":"_bigBoyUpgrade"},
+	{"title":"titan","desc":"collosal titan type shit","effect":"_titanUpgrade"},
 	{"title":"birth control","desc":"lets you control how pregenant you are using the mouse wheel","effect":"_birthControlUpgrade"},
-	{"title":"astronaut","desc":"decreases your gravity by 50%","effect":"_astronautUpgrade"},
-	{"title":"punisher","desc":"increases damage by 50%","effect":"_punisherUpgrade"},
-	{"title":"rugdoll","desc":"increases knockback by 50%","effect":"_rugUpgrade"},
-	{"title":"trigger finger","desc":"reduces your shotgun cooldown by 25%","effect":"_triggerFingerUpgrade"},
+	{"title":"astronaut","desc":"moon gravity enabled!","effect":"_astronautUpgrade"},
+	{"title":"punisher","desc":"JUDGE! JURY! EXECUTIONER!","effect":"_punisherUpgrade"},
+	{"title":"rugdoll","desc":"become a rugdoll! except that idk how to use them so just become a punching bag T_T","effect":"_rugUpgrade"},
+	{"title":"trigger finger","desc":"put your cornHub muscle memory into use","effect":"_triggerFingerUpgrade"},
 	{"title":"robuddy","desc":"i know you are bad at making friends... since i couldnt get a real human to agree to being your friend you get a robot!","effect":"_robuddyUpgrade"},
 ]
 var shown = [0,0,0]
@@ -25,7 +30,11 @@ func _ready() -> void:
 
 func _roll():
 	pool.clear()
+	if upgrades == null:
+		upgrades = get_tree().get_first_node_in_group("upgradeManager")
 	for i in cards.size():
+		if cards[i].has("robo") and upgrades.roboCount == 0:
+			continue
 		pool.append(i)
 	pool.shuffle()
 	for i in buttons.size():

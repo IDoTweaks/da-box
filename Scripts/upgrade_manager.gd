@@ -3,6 +3,10 @@ extends Node3D
 @export var shotgunManager : Node3D
 
 var roboCount := 0
+var robuddies := []
+var roboDmgMult := 1.0
+var roboRateMult := 1.0
+var roboPerce := 0.0
 
 @onready var robuddy = preload("res://Objects/robuddy.tscn")
 
@@ -16,16 +20,38 @@ func _robuddyUpgrade():
 	get_tree().current_scene.add_child(temp)
 	temp.global_position = player.global_position
 	temp.angle = roboCount * TAU / 3
+	temp.dmg *= roboDmgMult
+	temp.fireInterval *= roboRateMult
+	temp.perceDmg = roboPerce
+	robuddies.append(temp)
 	roboCount += 1
 	return "i know you are bad at making friends... since i couldnt get a real human to agree to being your friend you get a robot!"
 
 func _bigBoyUpgrade():
 	player._setSize(player.size * 1.25)
-	return "increases size by 25%"
+	return "stop breathing so much! you fucking inflated"
+
+func _advancedCalcuklatingUpgrade():
+	roboPerce += .1
+	for robo in robuddies:
+		robo.perceDmg =roboPerce
+	return "your robuddies can now calculate % and they are ADDICTED"
+
+func _goldPlatedUpgrade():
+	roboRateMult *= .65
+	for robot in robuddies:
+		robot.fireInterval *= .65
+	return "your robuddies got a hardware grant and decided to stack them to get some gold plated parts"
+
+func _evilAiUpgrade():
+	roboDmgMult *= 1.75
+	for robot in robuddies:
+		robot.dmg *= 1.75
+	return "your robots decided to buy lots of fighting books and burn them! but at least they kill better YAYY"
 
 func _titanUpgrade():
 	player._setSize(player.size * 1.6)
-	return "increases size by 60%"
+	return "collosal titan type shit"
 
 func _birthControlUpgrade():
 	player.birthControl = true
@@ -36,19 +62,19 @@ func _noop():
 
 func _astronautUpgrade():
 	player.gravityMult *= .5
-	return "decreases your gravity by 50%"
+	return "moon gravity enabled!"
 
 func _punisherUpgrade():
 	shotgunManager.dmg *= 1.5
-	return "increases damage by 50%"
+	return "JUDGE! JURY! EXECUTIONER!"
 
 func _rugUpgrade():
 	player.kbMult *= 1.5
-	return "increases knockback by 50%"
+	return "become a rugdoll! except that idk how to use them so just become a punching bag T_T"
 
 func _triggerFingerUpgrade():
 	player._reduceCd(.75)
-	return "reduces your shotgun cooldown by 25%"
+	return "put your cornHub muscle memory into use"
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:

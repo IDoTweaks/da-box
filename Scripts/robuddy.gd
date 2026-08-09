@@ -9,9 +9,10 @@ var angle = 0.0
 @export var followRadius := 1.8
 @export var followSpeed := 8.0
 @export var orbitSpeed := 1.5
-@export var fireIntervasl := 1.0
+@export var fireInterval := 1.0
 @export var fireRange := 25.0
 @export var dmg := 25.0
+@export var perceDmg := 0.0
 
 @onready var bullet = preload("res://Objects/bullet.tscn")
 
@@ -29,17 +30,22 @@ func _tracer(point):
 	t.tween_property(temp,"global_position",point,.08)
 	t.tween_callback(temp.queue_free)
 
+func _hitDamage(maxHealth):
+	if perceDmg == 0:
+		return dmg
+	return maxHealth * perceDmg
+
 func _fire():
 	var body = cluster._nearestBody(global_position,fireRange)
 	if body != null:
 		_tracer(body.global_position)
-		body._damage(dmg)
+		body._damage(_hitDamage(body.maxHealth))
 		return
 	var idx = cluster._nearestVirtual(global_position, fireRange)
 	if idx == -1:
 		return
 	_tracer(cluster.virtPos[idx])
-	cluster._damageVirtual(idx,dmg)
+	cluster._damageVirtual(idx,_hitDamage(cluster.virtMax[idx]))
 	
 
 
@@ -59,7 +65,7 @@ func _physics_process(delta: float) -> void:
 	fireTimer -= delta
 	if fireTimer >0:
 		return
-	fireTimer = fireIntervasl
+	fireTimer = fireInterval
 	_fire()
 	
 
