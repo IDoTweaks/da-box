@@ -1,7 +1,8 @@
 extends Node3D
 
 var waveNumber = 0
-var waveTimer = 0.0
+var killBase = 0
+var waveQuota = 0
 var spawnTimer = 0.0
 var toSpawn = 0
 var bossesToSpawn = 0
@@ -30,7 +31,7 @@ var flyTotal = 0.0
 
 @export var testing := false
 @export var autoStart := true
-@export var waveTime := 25.0
+@export var waveTime := 12.0
 @export var baseCount := 4
 @export var countGrowth := 1.145
 @export var spawnInterval := .25
@@ -75,7 +76,6 @@ func _start():
 	waveNumber = 0
 	toSpawn = 0
 	bossesToSpawn = 0
-	waveTimer = 0.0
 	spawnTimer = 1.0
 	_nextWave()
 
@@ -97,11 +97,19 @@ func _onCardPicked():
 
 func _nextWave():
 	waveNumber += 1
-	waveTimer = waveTime
+	var count = _waveCount(waveNumber)
 	toSpawn = int(min(toSpawn + _waveCount(waveNumber), maxQueued))
+	waveQuota = count
+	killBase = clusterManager.kills
 	_rebuildLevels()
 	if _isBossWave():
+		var bosses = _bossCount()
 		bossesToSpawn += _bossCount()
+		waveQuota += bosses
+	
+
+func _waveKills():
+	return clusterManager.kills - killBase
 
 func _waveCount(n):
 	return int(min(baseCount * pow(countGrowth, n - 1), maxWaveCount))
@@ -213,10 +221,10 @@ func _physics_process(delta: float) -> void:
 		return
 	if not _hasTier(bossLevel):
 		bossesToSpawn = 0
-	waveTimer -= delta
+	if _waveKills() >= waveQuota:
+		_endWave()
+		return
 	if toSpawn <= 0 and bossesToSpawn <= 0:
-		if _aliveCount() <= 0:
-			_endWave()
 		return
 	spawnTimer -= delta
 	if spawnTimer > 0:

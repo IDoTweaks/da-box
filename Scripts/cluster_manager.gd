@@ -47,6 +47,7 @@ var grid : Dictionary = {}
 var baseAngle := 0.0
 var repathCursor := 0
 var frameCount := 0
+var kills := 0
 var hawkTimer := 0.0
 var targetRadius := 0.0
 var bodyRadius := 0.0
@@ -148,6 +149,8 @@ func _unRegister(enemy):
 	data.erase(enemy)
 
 func _despawn(enemy):
+	if enemy.dead:
+		kills +=1
 	var pt = data[enemy]["poolType"] if data.has(enemy) else -1
 	if data.has(enemy) and data[enemy]["model"] != null:
 		data[enemy]["model"].transform = data[enemy]["modelRest"]
@@ -271,6 +274,7 @@ func _virtDie(i):
 	get_tree().current_scene.add_child(vfx)
 	vfx.global_position = virtPos[i]
 	virtHealth[i] = 0
+	kills += 1
 
 func _virtualAt(from: Vector3, dir : Vector3,maxDist:float):
 	virtHitT = -1
