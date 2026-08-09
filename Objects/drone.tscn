@@ -15,6 +15,12 @@ material = SubResource("StandardMaterial3D_j8ubb")
 [sub_resource type="BoxMesh" id="BoxMesh_yeay5"]
 size = Vector3(0.1, 0.1, 0.1)
 
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_isdyx"]
+albedo_color = Color(0.23392546, 0.23392546, 0.23392543, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_nrc82"]
+material = SubResource("StandardMaterial3D_isdyx")
+
 [node name="Drone" type="CharacterBody3D" unique_id=458966374]
 collision_layer = 4
 script = ExtResource("1_edmjf")
@@ -51,3 +57,8 @@ mesh = SubResource("BoxMesh_isdyx")
 [node name="launchPoint" type="MeshInstance3D" parent="." unique_id=220554749]
 transform = Transform3D(0.10800001, 0, 0, 0, -4.371137e-09, 0.22999991, 0, -0.09999996, -1.0053616e-08, 0, -0.1773605, 0)
 mesh = SubResource("BoxMesh_yeay5")
+
+[node name="virtMesh" type="MeshInstance3D" parent="." unique_id=1639237966]
+transform = Transform3D(0.86510843, 0, 0, 0, 0.14975199, 0, 0, 0, 0.65600103, 0, 0.1201216, 0)
+visible = false
+mesh = SubResource("BoxMesh_nrc82")

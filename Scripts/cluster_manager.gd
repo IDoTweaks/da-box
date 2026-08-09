@@ -47,6 +47,9 @@ var frameCount := 0
 var hawkTimer := 0.0
 var targetRadius := 0.0
 var bodyRadius := 0.0
+var virtHitT := 0.0
+var virtBar
+var virtbarFill
 
 var virtPos : PackedVector3Array
 var virtHealth : PackedFloat32Array
@@ -88,6 +91,7 @@ const DEAFULTS := {
 }
 
 @onready var explosionVfx = preload("res://particles/explosionVfx.tscn")
+@onready var healthbarScene = preload("res://Objects/healthBar.tscn")
 
 func _ready() -> void:
 	add_to_group("clusterManager")
@@ -141,6 +145,8 @@ func _unRegister(enemy):
 
 func _despawn(enemy):
 	var pt = data[enemy]["poolType"] if data.has(enemy) else -1
+	if data.has(enemy) and data[enemy]["model"] != null:
+		data[enemy]["model"].transform = data[enemy]["modelRest"]
 	_unRegister(enemy)
 	if pt >= 0:
 		enemy.get_parent().remove_child(enemy)
@@ -173,8 +179,15 @@ func _registerType(scene) -> int:
 		if virtTypes[i]["scene"] == scene:
 			return i
 	var temp = scene.instantiate()
-	var found = _findMesh(temp, Transform3D())
+	var virt = temp.get_node_or_null("virtMesh")
+	var found = []
+	if virt != null and virt.mesh:
+		found = [virt.mesh, virt.transform]
+	else:
+		found = _findMesh(temp,Transform3D())
 	var mesh = BoxMesh.new()
+	#var found = _findMesh(temp, Transform3D())
+	#var mesh = BoxMesh.new()
 	var meshXform = Transform3D()
 	if not found.is_empty():
 		mesh = found[0]
@@ -190,7 +203,8 @@ func _registerType(scene) -> int:
 		"hitRadius": temp.get("hitRadius") if temp.get("hitRadius") != null else .9,
 		"hitY": temp.get("hitHeight") if temp.get("hitHeight") != null else 0.0,
 		"maxHealth": float(temp.get("health") if temp.get("health") != null else 100),
-		"spawnTime": assembleTime if _stat(temp,"flying") else riseTime
+		"spawnTime": assembleTime if _stat(temp,"flying") else riseTime,
+		"barHeight": temp.get("barHeight") if temp.get("barHeight") != null else 2.0,
 	}
 	temp.free()
 	virtTypes.append(t)
@@ -254,9 +268,10 @@ func _virtDie(i):
 	vfx.global_position = virtPos[i]
 	virtHealth[i] = 0
 
-func _pelletHit(from : Vector3, dir : Vector3, maxDist : float, dmg) -> float:
+func _virtualAt(from: Vector3, dir : Vector3,maxDist:float):
+	virtHitT = -1
 	if virtPos.is_empty():
-		return -1.0
+		return -1
 	var bestI = -1
 	var bestT = INF
 	var seen := {}
@@ -265,7 +280,7 @@ func _pelletHit(from : Vector3, dir : Vector3, maxDist : float, dmg) -> float:
 		var p = from + dir * minf(s * cellSize, maxDist)
 		var base = _virtCell(p)
 		for x in range(-1,2):
-			for z in range(-1,2):
+			for z in range(1,-2):
 				var cell = base + Vector2i(x,z)
 				if not virtGrid.has(cell):
 					continue
@@ -283,15 +298,42 @@ func _pelletHit(from : Vector3, dir : Vector3, maxDist : float, dmg) -> float:
 					if t < 0 or t > maxDist:
 						continue
 					var r = vt["hitRadius"]
-					if (from + dir * t).distance_squared_to(center) <= r * r and t < bestT:
-						bestT = t
+					if (from + dir*t).distance_squared_to(center) <= r * r and t < bestT:
 						bestI = idx
+						bestT = t
 	if bestI == -1:
-		return -1.0
-	virtHealth[bestI] -= dmg
-	if virtHealth[bestI] <= 0:
-		_virtDie(bestI)
-	return bestT
+		return -1
+	virtHitT = bestT
+	return bestI
+	
+
+func _pelletHit(from : Vector3, dir : Vector3, maxDist : float, dmg) -> float:
+	var idx = _virtualAt(from,dir,maxDist)
+	if idx == -1:
+		return -1
+	_damageVirtual(idx,dmg)
+	return virtHitT
+
+func _showVirtBar(i):
+	if virtBar == null:
+		virtBar = healthbarScene.instantiate()
+		add_child(virtBar)
+		virtbarFill = virtBar.get_node("fill")
+	virtBar.visible = true
+	var vt = virtTypes[virtType[i]]
+	virtBar.global_position = virtPos[i] + Vector3(0,vt["barHeight"],0)
+	var ratio = maxf(virtHealth[i] / virtMax[i],.001)
+	var w = virtbarFill.mesh.size.x
+	virtbarFill.scale.x = ratio
+	virtbarFill.position.x = -(w * (1-ratio)) / 2
+	var cam = get_viewport().get_camera_3d()
+	if cam:
+		virtBar.look_at(virtBar.global_position + (virtBar.global_positon- cam.global_position))
+	
+
+func _hideVirtBar():
+	if virtBar:
+		virtBar.visible = false
 
 func _damageVirtual(i,dmg):
 	virtHealth[i] -= dmg

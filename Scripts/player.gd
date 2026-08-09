@@ -17,6 +17,7 @@ var inAir = false
 var lookedAt = null
 var shotgunRest : Vector3
 var sizeTween = null
+var cluster
 
 @export var explosionFallOff := 1.5
 @export var deafualtShotgunForce := 25.0
@@ -40,7 +41,7 @@ var sizeTween = null
 @onready var shotgunEnd = $playerCam/shotGun/shotgunEnd
 @onready var shotgun = $playerCam/shotGun
 @onready var ray = $playerCam/RayCast3D
-@onready var lookRay = $playerCam/lookRay
+@onready var lookRay : RayCast3D= $playerCam/lookRay
 @onready var playerCam: Camera3D = $playerCam
 @onready var shotgunCd = $shotgunCd
 @onready var rayEnd = $playerCam/rayEnd
@@ -217,13 +218,26 @@ func _updateLookedAt():
 	var hit = lookRay.get_collider() if lookRay.is_colliding() else null
 	if hit != null and not hit.has_method("_showHealthBar"):
 		hit = null
-	if hit == lookedAt:
-		return
-	if is_instance_valid(lookedAt):
-		lookedAt._hideHealthBar()
-	lookedAt = hit
+	if hit != lookedAt:
+		if is_instance_valid(lookedAt):
+			lookedAt._hideHealthBar()
+		lookedAt = hit
+		if lookedAt:
+			lookedAt._showHealthBar()
+	if cluster == null:
+		cluster = get_tree().get_first_node_in_group("clusterManager")
 	if lookedAt != null:
-		lookedAt._showHealthBar()
+		cluster._hideVirtBar()
+		return
+	var from = lookRay.global_position
+	var to = lookRay.to_global(lookRay.target_position)
+	var idx = cluster._virtualAt(from, (to - from).normalized(), from.distance_to(to))
+	if idx == -1:
+		cluster._hideVirtBar()
+		return
+	cluster._showVirtBar
+	
+	
 
 func _explosionDamage(point,damage):
 	var amount = damage
