@@ -3,6 +3,7 @@ var health = 100
 
 @export var maxHealth := 100.0
 
+@onready var waveLabel = $waveLabel
 @onready var healthBar = $healthBar
 @onready var healthValue = $healthBar/value
 @onready var hitMarker = $hitMarker
@@ -36,3 +37,4 @@ func _process(delta: float) -> void:
 		if waves == null:
 			return
 	debugLabel.text = str(Engine.get_frames_per_second()) + " fps\nwave " + str(waves.waveNumber)
+	waveLabel.text = "wave " + str(waves.waveNumber) + "\n" + str(mini(waves._waveKills(),waves.waveQuota)) + " / " + str(waves.waveQuota)

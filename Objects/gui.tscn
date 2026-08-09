@@ -2,21 +2,6 @@
 
 [ext_resource type="Script" uid="uid://b5nh8vimrvynk" path="res://Scripts/gui.gd" id="1_on31g"]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hpback"]
-bg_color = Color(0.13, 0.12, 0.14, 0.85)
-border_width_left = 3
-border_width_top = 3
-border_width_right = 3
-border_width_bottom = 3
-border_color = Color(0.05, 0.04, 0.06, 1)
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hpfill"]
-bg_color = Color(0.87, 0.13, 0.17, 1)
-expand_margin_left = -3.0
-expand_margin_top = -3.0
-expand_margin_right = -3.0
-expand_margin_bottom = -3.0
-
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_crosshair"]
 bg_color = Color(1, 1, 1, 1)
 border_width_left = 2
@@ -33,6 +18,21 @@ border_width_right = 2
 border_width_bottom = 2
 border_color = Color(0.05, 0.04, 0.06, 1)
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hpback"]
+bg_color = Color(0.13, 0.12, 0.14, 0.85)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.05, 0.04, 0.06, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hpfill"]
+bg_color = Color(0.87, 0.13, 0.17, 1)
+expand_margin_left = -3.0
+expand_margin_top = -3.0
+expand_margin_right = -3.0
+expand_margin_bottom = -3.0
+
 [sub_resource type="LabelSettings" id="LabelSettings_hpbar"]
 font_size = 20
 outline_size = 6
@@ -47,94 +47,105 @@ offset_top = 8.0
 offset_right = 200.0
 offset_bottom = 80.0
 
-[node name="crosshair" type="Control" parent="."]
-mouse_filter = 2
+[node name="crosshair" type="Control" parent="." unique_id=32903199]
+layout_mode = 3
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-
-[node name="up" type="Panel" parent="crosshair"]
 mouse_filter = 2
+
+[node name="up" type="Panel" parent="crosshair" unique_id=440101173]
+layout_mode = 0
 offset_left = -3.0
 offset_top = -19.0
 offset_right = 3.0
 offset_bottom = -5.0
+mouse_filter = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_crosshair")
 
-[node name="dwn" type="Panel" parent="crosshair"]
-mouse_filter = 2
+[node name="dwn" type="Panel" parent="crosshair" unique_id=586409713]
+layout_mode = 0
 offset_left = -3.0
 offset_top = 5.0
 offset_right = 3.0
 offset_bottom = 19.0
+mouse_filter = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_crosshair")
 
-[node name="right" type="Panel" parent="crosshair"]
-mouse_filter = 2
+[node name="right" type="Panel" parent="crosshair" unique_id=625130275]
+layout_mode = 0
 offset_left = 5.0
 offset_top = -3.0
 offset_right = 19.0
 offset_bottom = 3.0
+mouse_filter = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_crosshair")
 
-[node name="left" type="Panel" parent="crosshair"]
-mouse_filter = 2
+[node name="left" type="Panel" parent="crosshair" unique_id=178062894]
+layout_mode = 0
 offset_left = -19.0
 offset_top = -3.0
 offset_right = -5.0
 offset_bottom = 3.0
+mouse_filter = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_crosshair")
 
-[node name="dot" type="Panel" parent="crosshair"]
-mouse_filter = 2
+[node name="dot" type="Panel" parent="crosshair" unique_id=1667657151]
+layout_mode = 0
 offset_left = -3.0
 offset_top = -3.0
 offset_right = 3.0
 offset_bottom = 3.0
+mouse_filter = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_crosshair")
 
 [node name="hitMarker" type="Control" parent="." unique_id=509790562]
-mouse_filter = 2
 visible = false
+layout_mode = 3
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
 rotation = 0.7853982
+mouse_filter = 2
 
 [node name="up" type="Panel" parent="hitMarker" unique_id=509790563]
-mouse_filter = 2
+layout_mode = 0
 offset_left = -3.0
 offset_top = -26.0
 offset_right = 3.0
 offset_bottom = -12.0
+mouse_filter = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_hitMarker")
 
 [node name="dwn" type="Panel" parent="hitMarker" unique_id=509790564]
-mouse_filter = 2
+layout_mode = 0
 offset_left = -3.0
 offset_top = 12.0
 offset_right = 3.0
 offset_bottom = 26.0
+mouse_filter = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_hitMarker")
 
 [node name="right" type="Panel" parent="hitMarker" unique_id=509790565]
-mouse_filter = 2
+layout_mode = 0
 offset_left = 12.0
 offset_top = -3.0
 offset_right = 26.0
 offset_bottom = 3.0
+mouse_filter = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_hitMarker")
 
 [node name="left" type="Panel" parent="hitMarker" unique_id=509790566]
-mouse_filter = 2
+layout_mode = 0
 offset_left = -26.0
 offset_top = -3.0
 offset_right = -12.0
 offset_bottom = 3.0
+mouse_filter = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_hitMarker")
 
 [node name="healthBar" type="ProgressBar" parent="." unique_id=509790561]
@@ -151,12 +162,28 @@ theme_override_styles/fill = SubResource("StyleBoxFlat_hpfill")
 value = 100.0
 show_percentage = false
 
-[node name="value" type="Label" parent="healthBar"]
+[node name="value" type="Label" parent="healthBar" unique_id=1172591249]
+layout_mode = 0
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 text = "100"
 label_settings = SubResource("LabelSettings_hpbar")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="waveLabel" type="Label" parent="." unique_id=590818753]
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -120.0
+offset_right = 120.0
+offset_bottom = 64.0
+grow_horizontal = 2
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 6
+theme_override_font_sizes/font_size = 34
+text = "wave 1"
 horizontal_alignment = 1
 vertical_alignment = 1
