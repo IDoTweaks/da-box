@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://bi1drhhwyjn0g"]
 
 [ext_resource type="Script" uid="uid://dxmoyynsp4rvj" path="res://Scripts/robuddy.gd" id="1_vwlvn"]
+[ext_resource type="PackedScene" uid="uid://7u13h6v4fkbr" path="res://models/rodot_5000_-_flying_robot.glb" id="2_5u0hp"]
 
 [sub_resource type="BoxMesh" id="BoxMesh_5u0hp"]
 size = Vector3(0.4, 0.4, 0.4)
@@ -10,3 +11,5 @@ script = ExtResource("1_vwlvn")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=258796208]
 mesh = SubResource("BoxMesh_5u0hp")
+
+[node name="Sketchfab_Scene" parent="." unique_id=172788762 instance=ExtResource("2_5u0hp")]
