@@ -45,7 +45,7 @@ func _explode() -> void:
 		var falloff = 1.0 - (dist/explosionRadius)
 		if body.has_method("_applyImpulse"):
 			body._applyImpulse(global_position, dir, explosionStrength * falloff)
-		if body.has_method("_applyImpulse"):
+		if body.has_method("_explosionDamage"):
 			body._explosionDamage(global_position, explosionStrength * falloff)
 	queue_free()
 

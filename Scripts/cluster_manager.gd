@@ -481,7 +481,7 @@ func _promoteAll():
 	for i in range(virtPos.size() - 1,-1,-1):
 		if budget <= 0 or enemies.size() >= maxBodies:
 			return
-		if virtHealth[i] <= 0 or virtSpawn[i] >= 0:
+		if virtHealth[i] <= 0 or virtSpawn[i] > 0:
 			continue
 		_promote(i)
 		budget -= 1
