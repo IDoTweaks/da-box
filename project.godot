@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="daBox"
-run/main_scene="uid://dqjdk64qdvhjr"
+run/main_scene="uid://dtaqi8e1h4bss"
 config/features=PackedStringArray("4.6", "Forward Plus")
 config/icon="res://icon.svg"
 
