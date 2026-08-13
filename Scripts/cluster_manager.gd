@@ -288,7 +288,7 @@ func _virtualAt(from: Vector3, dir : Vector3,maxDist:float):
 		var p = from + dir * minf(s * cellSize, maxDist)
 		var base = _virtCell(p)
 		for x in range(-1,2):
-			for z in range(1,-2):
+			for z in range(-1,2):
 				var cell = base + Vector2i(x,z)
 				if not virtGrid.has(cell):
 					continue
@@ -336,7 +336,7 @@ func _showVirtBar(i):
 	virtbarFill.position.x = -(w * (1-ratio)) / 2
 	var cam = get_viewport().get_camera_3d()
 	if cam:
-		virtBar.look_at(virtBar.global_position + (virtBar.global_positon- cam.global_position))
+		virtBar.look_at(virtBar.global_position + (virtBar.global_position - cam.global_position))
 	
 
 func _hideVirtBar():

@@ -235,7 +235,7 @@ func _updateLookedAt():
 	if idx == -1:
 		cluster._hideVirtBar()
 		return
-	cluster._showVirtBar
+	cluster._showVirtBar(idx)
 	
 	
 
