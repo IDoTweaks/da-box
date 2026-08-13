@@ -1,0 +1,68 @@
+[gd_scene format=3 uid="uid://x3ls7hnetsvt"]
+
+[ext_resource type="Script" uid="uid://cdtlf461g4w50" path="res://Scripts/pause_menu.gd" id="1_d2rw1"]
+
+[node name="PauseMenu" type="CanvasLayer" unique_id=774501148 groups=["pauseMenu"]]
+process_mode = 3
+layer = 10
+visible = false
+script = ExtResource("1_d2rw1")
+
+[node name="ColorRect" type="ColorRect" parent="." unique_id=1044707332]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.6)
+
+[node name="title" type="Label" parent="ColorRect" unique_id=1038143674]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -20.0
+offset_right = 20.0
+offset_bottom = 23.0
+grow_horizontal = 2
+theme_override_font_sizes/font_size = 88
+text = "PAUSED"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="VBoxContainer" type="VBoxContainer" parent="ColorRect" unique_id=1569843805]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -267.0
+offset_top = -378.0
+offset_right = 256.0
+offset_bottom = 394.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 88
+
+[node name="resumeButton" type="Button" parent="ColorRect/VBoxContainer" unique_id=1884168024]
+custom_minimum_size = Vector2(300, 128)
+layout_mode = 2
+theme_override_font_sizes/font_size = 64
+text = "resume"
+
+[node name="mainMenuButton" type="Button" parent="ColorRect/VBoxContainer" unique_id=529197287]
+custom_minimum_size = Vector2(300, 128)
+layout_mode = 2
+theme_override_font_sizes/font_size = 64
+text = "main menu"
+
+[node name="quitButton" type="Button" parent="ColorRect/VBoxContainer" unique_id=587559386]
+custom_minimum_size = Vector2(300, 128)
+layout_mode = 2
+theme_override_font_sizes/font_size = 64
+text = "quit"
+
+[connection signal="pressed" from="ColorRect/VBoxContainer/resumeButton" to="." method="_on_resume_button_pressed"]
+[connection signal="pressed" from="ColorRect/VBoxContainer/mainMenuButton" to="." method="_on_main_menu_button_pressed"]
+[connection signal="pressed" from="ColorRect/VBoxContainer/quitButton" to="." method="_on_quit_button_pressed"]

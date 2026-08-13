@@ -124,12 +124,7 @@ func _unhandled_input(event: InputEvent) -> void:
 			_setSize(size + debugSizeStep)
 		if event.button_index == MOUSE_BUTTON_WHEEL_DOWN and birthControl:
 			_setSize(max(size - debugSizeStep,debugSizeStep))
-
-	if event.is_action_pressed("ui_cancel"):
-		if Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
-			Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
-		else:
-			Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+	
 
 func _fireShotgun() -> void:
 	ray.force_raycast_update()

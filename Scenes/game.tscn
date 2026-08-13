@@ -4,6 +4,7 @@
 [ext_resource type="PackedScene" uid="uid://4oor6jdy5b22" path="res://Objects/clusterManager.tscn" id="2_qxrlw"]
 [ext_resource type="PackedScene" path="res://Objects/waveManager.tscn" id="5_wave"]
 [ext_resource type="PackedScene" path="res://Objects/cardScreen.tscn" id="6_card"]
+[ext_resource type="PackedScene" uid="uid://x3ls7hnetsvt" path="res://Objects/pauseMenu.tscn" id="6_i6g32"]
 [ext_resource type="Shader" uid="uid://bsfy5upklry81" path="res://shaders/gridWorld.gdshader" id="7_grid"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_box"]
@@ -215,6 +216,8 @@ target = NodePath("../player")
 clusterManager = NodePath("../ClusterManager")
 
 [node name="cardScreen" parent="." unique_id=1889281573 instance=ExtResource("6_card")]
+
+[node name="PauseMenu" parent="." unique_id=774501148 instance=ExtResource("6_i6g32")]
 
 [node name="NavigationRegion3D" type="NavigationRegion3D" parent="." unique_id=1898132346]
 transform = Transform3D(150, 0, 0, 0, 1, 0, 0, 0, 150, 0, -1, 0)
