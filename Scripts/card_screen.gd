@@ -1,5 +1,9 @@
 extends CanvasLayer
 
+@export var delTime := .35
+@export var dealTiming := .1
+@export var flipTime := .15
+@export var unClickableTime := .25
 
 #{"title":"","desc":"","effect":""},
 var cards = [
@@ -19,14 +23,30 @@ var shown = [0,0,0]
 var pool : Array = []
 var waves = null
 var upgrades = null
+var faceUp = [false,false,false]
+var tweens = [null,null,null]
+var timer : Timer
+var canPick = false
 
 @onready var title = $dim/title
 @onready var buttons = [$dim/row/card0,$dim/row/card1,$dim/row/card2]
 
 func _ready() -> void:
+	timer = Timer.new()
+	timer.wait_time = unClickableTime
+	timer.autostart = false
+	timer.one_shot = true
+	timer.process_mode = Node.PROCESS_MODE_ALWAYS
+	timer.timeout.connect(onTimerEnd)
+	add_child(timer)
 	add_to_group("cardScreen")
 	for i in buttons.size():
 		buttons[i].pressed.connect(_pick.bind(i))
+		buttons[i].mouse_entered.connect(_onCardHover.bind(i,true))
+		buttons[i].mouse_exited.connect(_onCardHover.bind(i,false))
+
+func onTimerEnd():
+	canPick = true
 
 func _roll():
 	pool.clear()
@@ -44,10 +64,32 @@ func _roll():
 		shown[i] = pool[i]
 		var c = cards[pool[i]]
 		buttons[i].visible = true
+		_setFace(i, true)
 		buttons[i].get_node("text/cardTitle").text = c["title"]
 		buttons[i].get_node("text/cardDesc").text = c["desc"]
 
+func _cardTween(i):
+	if tweens[i]:
+		tweens[i].kill()
+	tweens[i] = create_tween()
+	return tweens[i]
+	
+
+func _onCardHover(i, isHovered):
+	var tween = _cardTween(i)
+	var target_scale = Vector2(1.1, 1.1) if isHovered else Vector2(1, 1)
+	
+	tween.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	tween.tween_property(buttons[i], "scale", target_scale, flipTime)
+	
+	
+
+func _setFace(i,up):
+	buttons[i].get_node("text").visible = up
+	buttons[i].get_node("back").visible = !up
+
 func _open(caller,waveNum):
+	timer.start()
 	waves = caller
 	_roll()
 	title.text = "wave " + str(waveNum)
@@ -56,11 +98,14 @@ func _open(caller,waveNum):
 	get_tree().paused = true
 
 func _close():
+	canPick = false
 	visible = false
 	get_tree().paused = false
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 
 func _pick(slot):
+	if !canPick:
+		return
 	if upgrades == null:
 		upgrades = get_tree().get_first_node_in_group("upgradeManager")
 	upgrades.call(cards[shown[slot]]["effect"])

@@ -1,14 +1,21 @@
-[gd_scene format=3]
+[gd_scene format=3 uid="uid://djspymtydaef4"]
 
-[ext_resource type="Script" path="res://Scripts/card_screen.gd" id="1_card"]
+[ext_resource type="Script" uid="uid://c0c3dnlvs2rm5" path="res://Scripts/card_screen.gd" id="1_card"]
 
-[node name="cardScreen" type="CanvasLayer"]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_20kjv"]
+bg_color = Color(0.12941177, 0.12156863, 0.14117648, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+
+[node name="cardScreen" type="CanvasLayer" unique_id=24935009]
 process_mode = 3
 layer = 10
 visible = false
 script = ExtResource("1_card")
 
-[node name="dim" type="ColorRect" parent="."]
+[node name="dim" type="ColorRect" parent="." unique_id=1580754247]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -16,7 +23,7 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0, 0, 0, 0.6)
 
-[node name="title" type="Label" parent="dim"]
+[node name="title" type="Label" parent="dim" unique_id=1569860347]
 layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5
@@ -30,7 +37,7 @@ theme_override_font_sizes/font_size = 44
 text = "wave"
 horizontal_alignment = 1
 
-[node name="row" type="HBoxContainer" parent="dim"]
+[node name="row" type="HBoxContainer" parent="dim" unique_id=1715451789]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -45,11 +52,12 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/separation = 32
 
-[node name="card0" type="Button" parent="dim/row"]
+[node name="card0" type="Button" parent="dim/row" unique_id=1545797721]
 custom_minimum_size = Vector2(260, 360)
 layout_mode = 2
 
-[node name="text" type="VBoxContainer" parent="dim/row/card0"]
+[node name="text" type="VBoxContainer" parent="dim/row/card0" unique_id=160436964]
+visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -63,24 +71,35 @@ grow_vertical = 2
 mouse_filter = 2
 theme_override_constants/separation = 16
 
-[node name="cardTitle" type="Label" parent="dim/row/card0/text"]
+[node name="cardTitle" type="Label" parent="dim/row/card0/text" unique_id=2059007443]
 layout_mode = 2
 theme_override_font_sizes/font_size = 26
 text = "card"
 horizontal_alignment = 1
 
-[node name="cardDesc" type="Label" parent="dim/row/card0/text"]
+[node name="cardDesc" type="Label" parent="dim/row/card0/text" unique_id=1660866687]
 layout_mode = 2
 size_flags_vertical = 3
 text = "desc"
 horizontal_alignment = 1
 autowrap_mode = 3
 
-[node name="card1" type="Button" parent="dim/row"]
+[node name="back" type="Panel" parent="dim/row/card0" unique_id=1902851251]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_20kjv")
+
+[node name="card1" type="Button" parent="dim/row" unique_id=707395797]
 custom_minimum_size = Vector2(260, 360)
 layout_mode = 2
 
-[node name="text" type="VBoxContainer" parent="dim/row/card1"]
+[node name="text" type="VBoxContainer" parent="dim/row/card1" unique_id=1103507620]
+visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -94,24 +113,35 @@ grow_vertical = 2
 mouse_filter = 2
 theme_override_constants/separation = 16
 
-[node name="cardTitle" type="Label" parent="dim/row/card1/text"]
+[node name="cardTitle" type="Label" parent="dim/row/card1/text" unique_id=66008364]
 layout_mode = 2
 theme_override_font_sizes/font_size = 26
 text = "card"
 horizontal_alignment = 1
 
-[node name="cardDesc" type="Label" parent="dim/row/card1/text"]
+[node name="cardDesc" type="Label" parent="dim/row/card1/text" unique_id=1903893523]
 layout_mode = 2
 size_flags_vertical = 3
 text = "desc"
 horizontal_alignment = 1
 autowrap_mode = 3
 
-[node name="card2" type="Button" parent="dim/row"]
+[node name="back" type="Panel" parent="dim/row/card1" unique_id=197903001]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_20kjv")
+
+[node name="card2" type="Button" parent="dim/row" unique_id=284891325]
 custom_minimum_size = Vector2(260, 360)
 layout_mode = 2
 
-[node name="text" type="VBoxContainer" parent="dim/row/card2"]
+[node name="text" type="VBoxContainer" parent="dim/row/card2" unique_id=554916832]
+visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -125,15 +155,25 @@ grow_vertical = 2
 mouse_filter = 2
 theme_override_constants/separation = 16
 
-[node name="cardTitle" type="Label" parent="dim/row/card2/text"]
+[node name="cardTitle" type="Label" parent="dim/row/card2/text" unique_id=772275315]
 layout_mode = 2
 theme_override_font_sizes/font_size = 26
 text = "card"
 horizontal_alignment = 1
 
-[node name="cardDesc" type="Label" parent="dim/row/card2/text"]
+[node name="cardDesc" type="Label" parent="dim/row/card2/text" unique_id=1814716013]
 layout_mode = 2
 size_flags_vertical = 3
 text = "desc"
 horizontal_alignment = 1
 autowrap_mode = 3
+
+[node name="back" type="Panel" parent="dim/row/card2" unique_id=1857014261]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_20kjv")
