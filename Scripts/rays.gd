@@ -21,6 +21,9 @@ func _ready() -> void:
 	rays = [ray]
 
 func _createRays():
+	for r in rays:
+		if r != ray:
+			r.queue_free()
 	rays = [ray]
 	ray.target_position.z = -reach
 	ray.collision_mask = hitMask

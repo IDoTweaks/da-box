@@ -18,6 +18,8 @@ var cards = [
 	{"title":"rugdoll","desc":"become a rugdoll! except that idk how to use them so just become a punching bag T_T","effect":"_rugUpgrade"},
 	{"title":"trigger finger","desc":"put your cornHub muscle memory into use","effect":"_triggerFingerUpgrade"},
 	{"title":"robuddy","desc":"i know you are bad at making friends... since i couldnt get a real human to agree to being your friend you get a robot!","effect":"_robuddyUpgrade"},
+	{"title":"ammo drop","desc":"get foreign aid but from one guy and his almost empty stock of bullets","effect":"_ammoDrop"},
+	{"title":"heat resistance","desc":"makes you clothing more heat resistant allowing you to achive higher speeds","effect":"_heatResistanceUpgrade"},
 ]
 var shown = [0,0,0]
 var pool : Array = []
