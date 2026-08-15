@@ -157,17 +157,23 @@ func _chargerData(enemy):
 	var cRange = _num(enemy,"chargeRange", 26.0)
 	var cMin = _num(enemy,"chargeMinRange", 9.0)
 	var cool = _num(enemy,"chargeCooldown", 4.0) #not so cool but cd is use elsewhere -_-
+	var slamCool = _num(enemy, "slamCooldown", 5.0)
 	
 	return {
 		"rangeSq" : cRange * cRange,
 		"minSq" : cMin * cMin,
 		"hit" : _num(enemy,"chargeHitRange", 3.2),
-		"speed" : _num(enemy,"chargeSpeed", 26.0),
-		"accel" : _num(enemy,"chargeAccel", 50.0),
+		"speed" : _num(enemy,"chargeSpeed", 20.0),
+		"accel" : _num(enemy,"chargeAccel", 80.0),
 		"wind" : _num(enemy,"chargeWindUp", .75),
 		"time" : _num(enemy,"chargeTime", 1.4),
 		"cool" : cool,
 		"recover" : _num(enemy,"chargeRecover", 1.2),
+		"slam" : _num(enemy,"slamRange", 4.5),
+		"slamWind" : _num(enemy,"slamWindUp", .65),
+		"slamRecover" : _num(enemy,"slamRecover", 1.0),
+		"slamCool" : slamCool,
+		"slamCd" : slamCool * .5,
 		"timer" : 0.0,
 		"cd" : cool * .5,
 		"dir" : Vector3.FORWARD,
@@ -942,9 +948,16 @@ func _moveCharger(enemy,d,s,delta):
 	var accel = s["acceleration"]
 	var pushed = true
 	c["cd"] -= delta
+	c["slamCd"] -= delta
 	
 	if state == "attack":
-		if c["cd"] <= 0 and distSqrd <= c["rangeSq"] and distSqrd >= c["minSq"]:
+		var slamReach = c["slam"] + targetRadius
+		if c["slamCd"] <= 0 and distSqrd <= slamReach:
+			d["state"] = "slamWind"
+			c["timer"] = c["slamWind"]
+			if enemy.has_method("_telegraphSlam"):
+				enemy._telegraphCharge(c["slamwind"])
+		elif c["cd"] <= 0 and distSqrd <= c["rangeSq"] and distSqrd >= c["minSq"]:
 			d["state"] = "chargeWind"
 			c["timer"] = c["wind"]
 			if enemy.has_method("_telegraphCharge"):
@@ -962,6 +975,15 @@ func _moveCharger(enemy,d,s,delta):
 			d["state"] = "charge"
 			c["timer"] = c["time"]
 			
+	elif  state == "slamWind":
+		c["timer"] -= delta
+		if c["timer"] <= 0:
+			if enemy.has_method("_slam"):
+				enemy._slam(target)
+			d["state"] = "recover"
+			c["timer"] = c["slamRecover"]
+			c["slamCd"] = c["slamCool"]
+	
 	elif state == "charge":
 		dir = c["dir"]
 		speed = c["speed"]

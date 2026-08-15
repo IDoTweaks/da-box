@@ -11,8 +11,8 @@ var healthFill
 @export var charger := true
 @export var chargeRange := 26.0
 @export var chargeMinRange := 9.0
-@export var chargeSpeed := 30.0
-@export var chargeAccel := 50.0
+@export var chargeSpeed := 20.0
+@export var chargeAccel := 80.0
 @export var chargeWindUp := .75
 @export var chargeTime := 1.4
 @export var chargerCooldown = 4.0
@@ -20,6 +20,15 @@ var healthFill
 @export var chargeRecover := 1.2
 @export var chargeDmg := 30.0
 @export var chargeKnockback := 55.0
+
+@export var slamRange := 4.5
+@export var slamWindUp := .65
+@export var slamRecover := 1.0
+@export var slamCooldown := 5.0
+@export var slamRadius := 6.0
+@export var slamDmg := 30.0
+@export var slamKnockback := 42.0
+@export var slamUpBias := .8
 
 @export var moveSpeed := 3.2
 @export var acceleration := 8.0
@@ -36,7 +45,7 @@ var healthFill
 @export var fireRange := 4.5
 @export var windUp := .6
 @export var needsLineOfSight := false
-@export var dmg := 25
+@export var dmg := 0
 @export var hitRadius := 1.2
 @export var hitHeight := 2.2
 @export var barHeight := 6.0
@@ -73,9 +82,9 @@ func _reset():
 	_hideHealthBar()
 	_updateHealthBar()
 
-func _spawnVfx():
+func _spawnVfx(vfxSize := 2.0):
 	var vfx = explosionVfx.instantiate()
-	vfx.size = 2.0
+	vfx.size = vfxSize
 	get_tree().current_scene.add_child(vfx)
 	vfx.global_position = global_position
 
@@ -97,7 +106,22 @@ func _chargeHit(targ):
 			dir = -global_transform.basis.z
 		targ._applyImpulse(global_position, (dir.normalized() + Vector3.UP * .35).normalized(), chargeKnockback)
 	
+
+func _slam(targ):
+	_spawnVfx(slamRadius/4.0)
+	var reach = slamRadius + clusterManager.targetRadius
+	var offset = targ.global_position - global_position
+	if offset.length_squared() > reach * reach:
+		return
+	if targ.has_method("_explosionDamage"):
+		targ._explosionDamage(global_position, slamDmg)
+	offset.y = 0
+	var flatSqrd = offset.length_squared()
+	var dir = offset / sqrt(flatSqrd) if flatSqrd > .25 else Vector3(randf() - .5,0,randf() - .5).normalized()
+	targ._applyImpulse(global_position, (dir + Vector3.UP * slamUpBias).normalized(), slamKnockback)
 	
+
+
 
 func _telegraph(duration):
 	#add here a growl
