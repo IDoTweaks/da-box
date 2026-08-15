@@ -520,7 +520,7 @@ func _promoteTick():
 				break
 			chosen.append(cands[k][1])
 	
-	if enemies.is_empty():
+	if chosen.is_empty():
 		return
 	chosen.sort()
 	chosen.reverse()
