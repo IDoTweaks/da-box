@@ -1,7 +1,6 @@
 extends Node3D
 @export var player : CharacterBody3D
 @export var shotgunManager : Node3D
-@export var rays : Node3D
 
 var roboCount := 0
 var robuddies := []
@@ -82,8 +81,9 @@ func _heatResistanceUpgrade():
 	return "makes you clothing more heat resistant allowing you to achive higher speeds"
 
 func _ammoDrop():
-	rays.bullets += randi_range(1,7)
-	rays._createRays()
+	shotgunManager.bullets += randi_range(1,7)
+	shotgunManager.raysManager.bullets = shotgunManager.bullets
+	shotgunManager.raysManager._createRays()
 	return "get foreign aid but from one guy and his almost empty stock of bullets"
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
