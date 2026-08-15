@@ -113,3 +113,7 @@ func _pick(slot):
 	upgrades.call(cards[shown[slot]]["effect"])
 	_close()
 	waves._onCardPicked()
+
+
+func _on_golden_ticket_button_pressed() -> void:
+	OS.shell_open("https://github.com/IDoTweaks/da-box/blob/main/shhh%20dont%20open%20it%20you%20will%20open%20it%20from%20the%20game!")
