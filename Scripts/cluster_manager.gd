@@ -952,11 +952,11 @@ func _moveCharger(enemy,d,s,delta):
 	
 	if state == "attack":
 		var slamReach = c["slam"] + targetRadius
-		if c["slamCd"] <= 0 and distSqrd <= slamReach:
+		if c["slamCd"] <= 0 and distSqrd <= slamReach * slamReach:
 			d["state"] = "slamWind"
 			c["timer"] = c["slamWind"]
 			if enemy.has_method("_telegraphSlam"):
-				enemy._telegraphCharge(c["slamwind"])
+				enemy._telegraphSlam(c["slamWind"])
 		elif c["cd"] <= 0 and distSqrd <= c["rangeSq"] and distSqrd >= c["minSq"]:
 			d["state"] = "chargeWind"
 			c["timer"] = c["wind"]

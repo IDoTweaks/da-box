@@ -6,6 +6,29 @@
 [sub_resource type="BoxShape3D" id="BoxShape3D_oc456"]
 size = Vector3(0.35046387, 1.1022034, 0.200943)
 
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_od3cu"]
+transparency = 1
+cull_mode = 2
+shading_mode = 0
+albedo_color = Color(1, 0.36862746, 0.05882353, 1)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_ysrxt"]
+material = SubResource("StandardMaterial3D_od3cu")
+top_radius = 1.0
+bottom_radius = 1.0
+height = 0.05
+radial_segments = 24
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ysrxt"]
+transparency = 1
+cull_mode = 2
+shading_mode = 0
+albedo_color = Color(0.69552606, 0.11583183, 3.85046e-07, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_oc456"]
+material = SubResource("StandardMaterial3D_ysrxt")
+size = Vector3(3.4, 0.06, 1)
+
 [node name="Miniboss" type="CharacterBody3D" unique_id=1042941783]
 collision_layer = 4
 script = ExtResource("1_od3cu")
@@ -16,3 +39,14 @@ transform = Transform3D(5, 0, 0, 0, 5, 0, 0, 0, 5, 0, 0, 0)
 [node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=1356136364]
 transform = Transform3D(5, 0, 0, 0, 5, 0, 0, 0, 5, 0.019226074, 2.759781, -0.25211334)
 shape = SubResource("BoxShape3D_oc456")
+
+[node name="slamWarn" type="MeshInstance3D" parent="." unique_id=208537730]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.06, 0)
+visible = false
+cast_shadow = 0
+mesh = SubResource("CylinderMesh_ysrxt")
+
+[node name="chargeWarn" type="MeshInstance3D" parent="." unique_id=104606624]
+visible = false
+cast_shadow = 0
+mesh = SubResource("BoxMesh_oc456")

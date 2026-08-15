@@ -4,6 +4,10 @@ var maxHealth
 var dead := false
 var healthBar
 var healthFill
+var warnTween
+
+@onready var slamWarn = $slamWarn
+@onready var chargeWarn = $chargeWarn
 
 @export var level := 6
 @export var isBoss := true
@@ -15,20 +19,22 @@ var healthFill
 @export var chargeAccel := 80.0
 @export var chargeWindUp := .75
 @export var chargeTime := 1.4
-@export var chargerCooldown = 4.0
+@export var chargeCooldown = 4.0
 @export var chargeHitRange := 3.2
 @export var chargeRecover := 1.2
 @export var chargeDmg := 30.0
 @export var chargeKnockback := 55.0
 
 @export var slamRange := 4.5
-@export var slamWindUp := .65
+@export var slamWindUp := .6525
 @export var slamRecover := 1.0
 @export var slamCooldown := 5.0
 @export var slamRadius := 6.0
 @export var slamDmg := 30.0
 @export var slamKnockback := 42.0
 @export var slamUpBias := .8
+@export var warnFadeFrom := .85
+@export var warnFadeTo := .25
 
 @export var moveSpeed := 3.2
 @export var acceleration := 8.0
@@ -42,7 +48,7 @@ var healthFill
 @export var attackRange := 3.5
 @export var attackPriority := 50.0
 @export var fireCooldown := 2.0
-@export var fireRange := 4.5
+@export var fireRange := 0.0
 @export var windUp := .6
 @export var needsLineOfSight := false
 @export var dmg := 0
@@ -72,6 +78,7 @@ func _die():
 	if dead:
 		return
 	dead = true
+	_hideWarns()
 	_spawnVfx()
 	clusterManager._despawn(self)
 
@@ -79,6 +86,7 @@ func _reset():
 	dead = false
 	health = maxHealth
 	velocity = Vector3.ZERO
+	_hideWarns()
 	_hideHealthBar()
 	_updateHealthBar()
 
@@ -99,15 +107,16 @@ func _attack(targ):
 func _chargeHit(targ):
 	if targ.has_method("_damage"):
 		targ._damage(chargeDmg)
-	if targ.has_method("+applyImpulse"):
+	if targ.has_method("_applyImpulse"):
 		var dir = targ.global_position - global_position
 		dir.y = 0
-		if dir.length.squared() < .0001:
+		if dir.length_squared() < .0001:
 			dir = -global_transform.basis.z
 		targ._applyImpulse(global_position, (dir.normalized() + Vector3.UP * .35).normalized(), chargeKnockback)
 	
 
 func _slam(targ):
+	_hideWarns()
 	_spawnVfx(slamRadius/4.0)
 	var reach = slamRadius + clusterManager.targetRadius
 	var offset = targ.global_position - global_position
@@ -121,7 +130,32 @@ func _slam(targ):
 	targ._applyImpulse(global_position, (dir + Vector3.UP * slamUpBias).normalized(), slamKnockback)
 	
 
+func _flashWarn(node, duration):
+	if warnTween != null and warnTween.is_valid():
+		warnTween.kill()
+	node.transparency = warnFadeFrom
+	node.visible = true
+	warnTween = create_tween()
+	warnTween.tween_property(node, "transparency", warnFadeTo, duration)
+	warnTween.tween_callback(node.hide)
+	
 
+func _telegraphCharge(duration):
+	var reach = chargeSpeed * chargeTime
+	chargeWarn.position = Vector3(0, .06, reach * .5)
+	chargeWarn.scale = Vector3(1,1,reach)
+	_flashWarn(chargeWarn, duration)
+
+func _telegraphSlam(duration):
+	slamWarn.scale = Vector3(slamRadius,1,slamRadius)
+	_flashWarn(slamWarn, duration)
+
+func _hideWarns():
+	if warnTween != null and warnTween.is_valid():
+		warnTween.kill()
+	warnTween = null
+	slamWarn.visible = false
+	chargeWarn.visible = false
 
 func _telegraph(duration):
 	#add here a growl
