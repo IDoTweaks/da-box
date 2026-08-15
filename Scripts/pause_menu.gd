@@ -1,6 +1,7 @@
 extends CanvasLayer
 
 var cards = null
+var death
 
 #ok you caught me calling them butts is confusing but i like it
 @onready var resumeButt =  $ColorRect/VBoxContainer/resumeButton
@@ -12,7 +13,7 @@ func _ready() -> void:
 	pass # Replace with function body.
 
 func _unhandled_input(event: InputEvent) -> void:
-	if not event.is_action_pressed("ui_cancel") or _cardsOpen():
+	if not event.is_action_pressed("ui_cancel") or _cardsOpen() or _deathOpen():
 		return
 	if visible:
 		_on_resume_button_pressed()
@@ -42,6 +43,11 @@ func _cardsOpen():
 	if cards == null:
 		cards = get_tree().get_first_node_in_group("cardScreen")
 	return cards != null and cards.visible
+
+func _deathOpen():
+	if death == null:
+		death = get_tree().get_first_node_in_group("deathScreen")
+	return death != null and death.visible
 
 func _on_quit_button_pressed() -> void:
 	get_tree().quit()

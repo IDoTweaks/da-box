@@ -14,6 +14,7 @@ var forceTime : Array
 var forceDecay : Array
 var onCd = false
 var inAir = false
+var dead := false
 var lookedAt = null
 var shotgunRest : Vector3
 var sizeTween = null
@@ -168,6 +169,8 @@ func _applyImpulse(point,dir : Vector3, strength):
 	
 
 func _physics_process(delta: float) -> void:
+	if dead:
+		return
 	_updateLookedAt()
 	if Input.is_action_just_pressed("leftClick") and not onCd:
 		_fireShotgun()
@@ -242,6 +245,8 @@ func _explosionDamage(point,damage):
 		_damage(amount)
 
 func _damage(amount):
+	if dead:
+		return
 	health -= amount
 	_updateGui()
 	if health <= 0:
@@ -255,7 +260,15 @@ func _getGravity():
 	return get_gravity() * gravityMult
 
 func _die():
-	queue_free()
+	if dead:
+		return
+	dead = true
+	health = 0
+	_updateGui()
+	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+	var screen = get_tree().get_first_node_in_group("deathScreen")
+	screen._open()
+	
 
 func _on_shotgun_cd_timeout() -> void:
 	onCd = false

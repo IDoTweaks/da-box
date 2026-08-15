@@ -1,0 +1,76 @@
+[gd_scene format=3 uid="uid://dmlsjewxrvhvx"]
+
+[ext_resource type="Script" uid="uid://bgctrsj0bfrxk" path="res://Scripts/death_screen.gd" id="1_tn6n2"]
+
+[node name="DeathScreen" type="CanvasLayer" unique_id=448454456]
+process_mode = 3
+layer = 20
+visible = false
+script = ExtResource("1_tn6n2")
+
+[node name="ColorRect" type="ColorRect" parent="." unique_id=1819805301]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.09803922, 0, 0, 0.7411765)
+
+[node name="title" type="Label" parent="ColorRect" unique_id=548622657]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -20.0
+offset_right = 20.0
+offset_bottom = 23.0
+grow_horizontal = 2
+theme_override_colors/font_color = Color(0.89411765, 0.21176471, 0.22745098, 1)
+theme_override_font_sizes/font_size = 96
+text = "YOU DIED"
+
+[node name="stats" type="Label" parent="ColorRect" unique_id=168406173]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -208.0
+offset_top = 133.0
+offset_right = 215.0
+offset_bottom = 498.0
+grow_horizontal = 2
+theme_override_font_sizes/font_size = 40
+
+[node name="VBoxContainer" type="VBoxContainer" parent="ColorRect" unique_id=2011883917]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -244.0
+offset_top = -20.0
+offset_right = 256.0
+offset_bottom = 527.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 40
+
+[node name="retryButton" type="Button" parent="ColorRect/VBoxContainer" unique_id=1055996382]
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+text = "RETRY"
+
+[node name="mainMenuButton" type="Button" parent="ColorRect/VBoxContainer" unique_id=1841048528]
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+text = "MAIN MENU"
+
+[node name="quit button" type="Button" parent="ColorRect/VBoxContainer" unique_id=1911167229]
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+text = "QUIT"
+
+[connection signal="pressed" from="ColorRect/VBoxContainer/retryButton" to="." method="_on_retry_button_pressed"]
+[connection signal="pressed" from="ColorRect/VBoxContainer/mainMenuButton" to="." method="_on_main_menu_button_pressed"]
+[connection signal="pressed" from="ColorRect/VBoxContainer/quit button" to="." method="_on_quit_button_pressed"]
