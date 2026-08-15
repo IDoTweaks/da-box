@@ -8,14 +8,14 @@
 [ext_resource type="PackedScene" uid="uid://dmijitrof0kmm" path="res://Objects/gui.tscn" id="6_0ar0x"]
 [ext_resource type="Script" uid="uid://bhf3pubiaesmw" path="res://Scripts/upgrade_manager.gd" id="7_slvmq"]
 
-[sub_resource type="BoxMesh" id="BoxMesh_3y5cq"]
-size = Vector3(0.01, 0.01, 0.01)
-
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ojbdc"]
 albedo_color = Color(0.20603463, 0.43408245, 1, 1)
 
 [sub_resource type="BoxMesh" id="BoxMesh_ojbdc"]
 size = Vector3(1, 2, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_3y5cq"]
+size = Vector3(0.01, 0.01, 0.01)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_y0qk3"]
 size = Vector3(1, 2, 1)
@@ -50,13 +50,13 @@ target_position = Vector3(0, 0, -5)
 target_position = Vector3(0, 0, -40)
 collision_mask = 5
 
-[node name="rayEnd" type="MeshInstance3D" parent="playerCam" unique_id=598920199]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -4.9915795)
-mesh = SubResource("BoxMesh_3y5cq")
-
 [node name="playerBody" type="MeshInstance3D" parent="." unique_id=599984515]
 material_override = SubResource("StandardMaterial3D_ojbdc")
 mesh = SubResource("BoxMesh_ojbdc")
+
+[node name="rayEnd" type="MeshInstance3D" parent="playerBody" unique_id=598920199]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.53849196, -5.1998835)
+mesh = SubResource("BoxMesh_3y5cq")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=1500620033]
 shape = SubResource("BoxShape3D_y0qk3")

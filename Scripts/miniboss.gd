@@ -6,6 +6,7 @@ var healthBar
 var healthFill
 
 @export var level := 6
+@export var isBoss := true
 @export var moveSpeed := 3.2
 @export var acceleration := 8.0
 @export var turnSpeed := 3.5
@@ -22,11 +23,11 @@ var healthFill
 @export var windUp := .6
 @export var needsLineOfSight := false
 @export var dmg := 25
-@export var hitRadius := 1.9
+@export var hitRadius := 1.2
 @export var hitHeight := 2.2
-@export var barHeight := 5.0
+@export var barHeight := 6.0
 @export var clusterManager : Node3D
-@export var health = 800
+@export var health = 2500
 
 @onready var explosionVfx = preload("res://particles/explosionVfx.tscn")
 @onready var healthBarScene = preload("res://Objects/healthBar.tscn")

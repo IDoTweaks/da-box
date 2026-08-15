@@ -34,9 +34,10 @@ extends Node3D
 @export var hawkDiveInterval := 4.0
 @export var hawkGroupSize := 5
 @export var hawkStagger := .12
-@export var  bodyOnlyBelow := 80
-@export var  bodyOnlyMargin := 20
-@export var  bodyOnlyBudget := 32
+@export var bodyOnlyBelow := 80
+@export var bodyOnlyMargin := 20
+@export var bodyOnlyBudget := 32
+@export var bossBodyOverflow := 4
 
 var globalFireTimer := 0.0
 var enemies : Array = []
@@ -212,6 +213,7 @@ func _registerType(scene) -> int:
 		"maxHealth": float(temp.get("health") if temp.get("health") != null else 100),
 		"spawnTime": assembleTime if _stat(temp,"flying") else riseTime,
 		"barHeight": temp.get("barHeight") if temp.get("barHeight") != null else 2.0,
+		"boss": temp.get("isBoss") == true,
 	}
 	temp.free()
 	virtTypes.append(t)
@@ -489,27 +491,37 @@ func _promoteAll():
 
 
 func _promoteTick():
-	if virtPos.is_empty() or enemies.size() >= maxBodies:
+	if virtPos.is_empty():
 		return
 	if bodyOnly:
 		_promoteAll()
 	var pd2 = promoteDistance * promoteDistance
 	var cands := []
+	var chosen := []
+	var full = enemies.size() >= maxBodies
 	var tpos = target.global_position
 	for i in virtPos.size():
 		if virtHealth[i] <= 0 or virtSpawn[i] > 0:
 			continue
+		if virtTypes[virtType[i]]["boss"]:
+			if enemies.size() + chosen.size() < maxBodies + bossBodyOverflow:
+				chosen.append(i)
+			continue
+		if full:
+			continue
+		
 		var d2 = virtPos[i].distance_squared_to(tpos)
 		if d2 < pd2:
 			cands.append([d2, i])
-	if cands.is_empty():
+	if !cands.is_empty():
+		cands.sort_custom(func(a,b): return a[0] < b[0])
+		for k in mini(promoteBudget, cands.size()):
+			if enemies.size() + chosen.size() >= maxBodies:
+				break
+			chosen.append(cands[k][1])
+	
+	if enemies.is_empty():
 		return
-	cands.sort_custom(func(a,b): return a[0] < b[0])
-	var chosen := []
-	for k in mini(promoteBudget, cands.size()):
-		if enemies.size() + chosen.size() >= maxBodies:
-			break
-		chosen.append(cands[k][1])
 	chosen.sort()
 	chosen.reverse()
 	for i in chosen:
@@ -556,9 +568,7 @@ func _demoteTick():
 	for i in range(enemies.size() - 1, -1, -1):
 		var enemy = enemies[i]
 		var d = data[enemy]
-		if d["poolType"] < 0:
-			continue
-		if enemy.global_position.distance_squared_to(tpos) <= dd2:
+		if d["poolType"] < 0 or virtTypes[d["poolType"]]["boss"] or enemy.global_position.distance_squared_to(tpos) <= dd2:
 			continue
 		_spawnVirtual(d["poolType"], enemy.global_position, enemy.health, 0.0)
 		virtMax[virtMax.size() - 1] = enemy.maxHealth
