@@ -7,6 +7,20 @@ var healthFill
 
 @export var level := 6
 @export var isBoss := true
+
+@export var charger := true
+@export var chargeRange := 26.0
+@export var chargeMinRange := 9.0
+@export var chargeSpeed := 30.0
+@export var chargeAccel := 50.0
+@export var chargeWindUp := .75
+@export var chargeTime := 1.4
+@export var chargerCooldown = 4.0
+@export var chargeHitRange := 3.2
+@export var chargeRecover := 1.2
+@export var chargeDmg := 30.0
+@export var chargeKnockback := 55.0
+
 @export var moveSpeed := 3.2
 @export var acceleration := 8.0
 @export var turnSpeed := 3.5
@@ -72,6 +86,18 @@ func _attack(targ):
 		return
 	if targ.has_method("_damage"):
 		targ._damage(dmg)
+
+func _chargeHit(targ):
+	if targ.has_method("_damage"):
+		targ._damage(chargeDmg)
+	if targ.has_method("+applyImpulse"):
+		var dir = targ.global_position - global_position
+		dir.y = 0
+		if dir.length.squared() < .0001:
+			dir = -global_transform.basis.z
+		targ._applyImpulse(global_position, (dir.normalized() + Vector3.UP * .35).normalized(), chargeKnockback)
+	
+	
 
 func _telegraph(duration):
 	#add here a growl

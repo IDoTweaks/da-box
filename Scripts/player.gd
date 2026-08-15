@@ -44,7 +44,7 @@ var cluster
 @onready var lookRay : RayCast3D= $playerCam/lookRay
 @onready var playerCam: Camera3D = $playerCam
 @onready var shotgunCd = $shotgunCd
-@onready var rayEnd = $playerCam/rayEnd
+@onready var rayEnd = $playerBody/rayEnd
 
 @onready var shotgunFireParticle = preload("res://particles/shotgunFireParticle.tscn")
 @onready var landingParticles = preload("res://particles/landingParticles.tscn")

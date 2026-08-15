@@ -94,6 +94,7 @@ const DEAFULTS := {
 	"diveSpeed":24.0,
 	"climbSpeed":12.0,
 	"diveRest":1.5,
+	"charger":false,
 }
 
 @onready var explosionVfx = preload("res://particles/explosionVfx.tscn")
@@ -128,7 +129,9 @@ func _register(enemy):
 		"slot":-1,
 		"path": PackedVector3Array(),
 		"idx":0,
-		"state": "circle",
+		"state": "attack" if stats ["charger"] else "circle",
+		"move":2 if stats["charger"] else (1 if stats ["diving"] else 0),
+		"chg":null,
 		"phase":  randf() * TAU,
 		"nextFire" : randf() * stats["fireCooldown"],
 		"windUp" : -1.0,
@@ -141,6 +144,36 @@ func _register(enemy):
 		"model" : model,
 		"modelRest" : model.transform if model != null else Transform3D()
 	}
+	if stats["charger"]:
+		data[enemy]["chg"] = _chargerData(enemy)
+	
+	
+
+func _num(enemy,key,fallback):
+	var v = enemy.get(key)
+	return fallback if v == null else float(v)
+
+func _chargerData(enemy):
+	var cRange = _num(enemy,"chargeRange", 26.0)
+	var cMin = _num(enemy,"chargeMinRange", 9.0)
+	var cool = _num(enemy,"chargeCooldown", 4.0) #not so cool but cd is use elsewhere -_-
+	
+	return {
+		"rangeSq" : cRange * cRange,
+		"minSq" : cMin * cMin,
+		"hit" : _num(enemy,"chargeHitRange", 3.2),
+		"speed" : _num(enemy,"chargeSpeed", 26.0),
+		"accel" : _num(enemy,"chargeAccel", 50.0),
+		"wind" : _num(enemy,"chargeWindUp", .75),
+		"time" : _num(enemy,"chargeTime", 1.4),
+		"cool" : cool,
+		"recover" : _num(enemy,"chargeRecover", 1.2),
+		"timer" : 0.0,
+		"cd" : cool * .5,
+		"dir" : Vector3.FORWARD,
+	}
+	
+
 
 func _unRegister(enemy):
 	var i = enemies.find(enemy)
@@ -614,7 +647,8 @@ func _assignSlots():
 	var count = slotDirs.size()
 	var step = TAU / count
 	for enemy in enemies:
-		if data[enemy]["stats"]["diving"]:
+		var d = data[enemy]
+		if d["move"] != 0:
 			continue
 		var offset = enemy.global_position - target.global_position
 		var want = int(round((atan2(offset.z, offset.x) - baseAngle) / step))
@@ -625,7 +659,7 @@ func _assignSlots():
 			if taken.has(i):
 				continue
 			var cost = enemy.global_position.distance_to(_ringPoint(enemy,i)) - forward.dot(-slotDirs[i]) * backBias
-			if i == data[enemy]["slot"]:
+			if i == d["slot"]:
 				cost -= switchPenalty
 			if cost < bestCost:
 				bestCost = cost
@@ -633,19 +667,21 @@ func _assignSlots():
 		if best == -1:
 			best = wrapi(want, 0, count)
 		taken[best] = true
-		data[enemy]["slot"] = best
+		d["slot"] = best
 
 func _assignRoles():
 	for enemy in enemies:
-		if data[enemy]["stats"]["diving"]:
+		var d = data[enemy]
+		if d["move"] != 0:
 			continue
-		data[enemy]["state"] = "circle"
-	var picked := []
+		d["state"] = "circle"
+	var picked := {}
 	for n in maxAttackers:
 		var best = null
 		var bestCost = INF
 		for enemy in enemies:
-			if enemy in picked or data[enemy]["stats"]["diving"]:
+			var d = data[enemy]
+			if d["move"] != 0 or picked.has(enemy):
 				continue
 			var cost = enemy.global_position.distance_to(target.global_position) - data[enemy]["stats"]["attackPriority"]
 			if cost < bestCost:
@@ -653,7 +689,7 @@ func _assignRoles():
 				best = enemy
 		if best == null:
 			break
-		picked.append(best)
+		picked[best] = true
 		data[best]["state"] = "attack"
 
 func _hawkRoles():
@@ -663,7 +699,7 @@ func _hawkRoles():
 	var flock := []
 	for enemy in enemies:
 		var d = data[enemy]
-		if not d["stats"]["diving"] or d["state"] != "circle" or d["diveTimer"] > 0:
+		if d["move"] != 1 or d["state"] != "circle" or d["diveTimer"] > 0:
 			continue
 		flock.append(enemy)
 	if flock.is_empty():
@@ -746,6 +782,10 @@ func _updateAvoidance():
 
 func _repathOne(enemy,map):
 	var d = data[enemy]
+	if d["move"] == 2:
+		d["path"] = NavigationServer3D.map_get_path(map,enemy.global_position, target.global_position, true)
+		d["idx"] = 0
+		return
 	if d["slot"]==-1:
 		return
 	var goal = target.global_position if d["state"] == "attack" else _slotPoint(enemy,d["slot"])
@@ -866,11 +906,124 @@ func _moveHawk(enemy,d,s,delta):
 		var wanted = enemy.global_transform.looking_at(enemy.global_position + enemy.velocity,Vector3.UP,true)
 		enemy.global_transform.basis = enemy.global_transform.basis.slerp(wanted.basis, clamp(s["turnSpeed"] * delta,0,1))
 
+func _chargerStep(enemy,d):
+	var pos = enemy.global_position
+	if d["idx"] < d["path"].size():
+		var waypoint = d["path"][d["idx"]]
+		var offsetWaypointX = waypoint.x - pos.x
+		var offsetWaypointZ = waypoint.z - pos.z
+		var dist2waypointSqrd = offsetWaypointX * offsetWaypointX + offsetWaypointZ * offsetWaypointZ
+		var tol = d["stats"]["waypointToTolerance"]
+		if dist2waypointSqrd < tol * tol:
+			d["idx"] += 1
+		else:
+			var dist2waypoint = sqrt(dist2waypointSqrd)
+			return Vector3(offsetWaypointX / dist2waypoint,0, offsetWaypointZ / dist2waypoint)
+		
+	var offsetTargX = target.global_position.x - pos.x
+	var offsetTargZ = target.global_position.z - pos.z
+	var disttargSqrd = offsetTargX * offsetTargX + offsetTargZ * offsetTargZ
+	if disttargSqrd < .0001:
+		return Vector3.ZERO
+	var dist2targ = sqrt(disttargSqrd)
+	return Vector3(offsetTargX /dist2targ, 0, offsetTargZ / dist2targ)
+	
+
+func _moveCharger(enemy,d,s,delta):
+	var c = d["chg"]
+	var pos = enemy.global_position
+	var tpos = target.global_position
+	var dirX = tpos.x - pos.x
+	var dirZ = tpos.z - pos.z
+	var distSqrd = dirX * dirX + dirZ * dirZ
+	var state = d["state"]
+	var dir := Vector3.ZERO
+	var speed = s["moveSpeed"]
+	var accel = s["acceleration"]
+	var pushed = true
+	c["cd"] -= delta
+	
+	if state == "attack":
+		if c["cd"] <= 0 and distSqrd <= c["rangeSq"] and distSqrd >= c["minSq"]:
+			d["state"] = "chargeWind"
+			c["timer"] = c["wind"]
+			if enemy.has_method("_telegraphCharge"):
+				enemy._telegraphCharge(c["wind"])
+		else:
+			dir = _chargerStep(enemy,d)
+	elif  state == "chargeWind":
+		c["timer"] -= delta
+		if c["timer"] <= 0:
+			if distSqrd > .0001:
+				var l = sqrt(distSqrd)
+				c["dir"] = Vector3(dirX / l, 0, dirZ / l)
+			else:
+				c["dir"] = -enemy.global_transform.basis.z
+			d["state"] = "charge"
+			c["timer"] = c["time"]
+			
+	elif state == "charge":
+		dir = c["dir"]
+		speed = c["speed"]
+		accel = c["accel"]
+		pushed = false
+		c["timer"] -= delta
+		var hitReach = c["hit"] + targetRadius
+		if distSqrd <= hitReach * hitReach:
+			if enemy.has_method("_chargeHit"):
+				enemy._chargeHit(target)
+			d["state"] = "recover"
+			c["timer"] = c["recover"]
+			c["cd"] = c["cool"]
+		elif c["timer"] <= 0:
+			d["state"] = "recover"
+			c["timer"] = c["recover"]
+			c["cd"] = c["cool"]
+			
+	else:
+		c["timer"] -= delta
+		if c["timer"] <= 0:
+			d["state"] = "attack"
+	
+	var want = dir * speed
+	if pushed:
+		want += _seperation(enemy)
+	var flat = Vector3(enemy.velocity.x,0,enemy.velocity.z).move_toward(Vector3(want.x,0,want.z),accel * delta)
+	enemy.velocity.x = flat.x
+	enemy.velocity.z = flat.z
+	if not enemy.is_on_floor():
+		enemy.velocity += enemy.get_gravity() * delta
+	else:
+		enemy.velocity.y = 0
+	enemy.move_and_slide()
+	
+	if d["state"] == "charge" and enemy.is_on_wall():
+		d["state"] = "recover"
+		c["timer"] = c["recover"]
+		c["cd"] = c["cool"]
+	
+	var  model = d["model"]
+	if model:
+		d["phase"] += delta * walkCycle * Vector2(enemy.velocity.x,enemy.velocity.z).length() / s["moveSpeed"]
+		var ph = sin(d["phase"])
+		var rest = d["modelRest"]
+		model.transform = Transform3D(rest.basis.rotated(Vector3.BACK, ph * walkSway), rest.origin + Vector3(0, absf(ph) * walkBob,0))
+	
+	var lookDir = c["dir"] if d["state"] == "charge" else Vector3(dirX,0,dirZ)
+	if lookDir.length_squared() > .0001:
+		var wanted = enemy.global_transform.looking_at(enemy.global_position + lookDir,Vector3.UP,true)
+		enemy.global_transform.basis = enemy.global_transform.basis.slerp(wanted.basis, clamp(s["turnSpeed"] * delta, 0,1))
+	
+
 func _moveEnemy(enemy,delta):
 	var d = data[enemy]
 	var s = d["stats"]
-	if s["diving"]:
+	var m = d["move"]
+	if m == 1:
 		_moveHawk(enemy,d,s,delta)
+		return
+	if m == 2:
+		_moveCharger(enemy,d,s,delta)
 		return
 	var dir = Vector3.ZERO
 	var toT = target.global_position - enemy.global_position
