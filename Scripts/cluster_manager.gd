@@ -174,6 +174,7 @@ func _chargerData(enemy):
 		"slamRecover" : _num(enemy,"slamRecover", 1.0),
 		"slamCool" : slamCool,
 		"slamCd" : slamCool * .5,
+		"last" : "",
 		"timer" : 0.0,
 		"cd" : cool * .5,
 		"dir" : Vector3.FORWARD,
@@ -1035,6 +1036,11 @@ func _moveCharger(enemy,d,s,delta):
 	if lookDir.length_squared() > .0001:
 		var wanted = enemy.global_transform.looking_at(enemy.global_position + lookDir,Vector3.UP,true)
 		enemy.global_transform.basis = enemy.global_transform.basis.slerp(wanted.basis, clamp(s["turnSpeed"] * delta, 0,1))
+	if d["state"] != c["last"]:
+		c["last"] = d["state"]
+		if enemy.has_method("_onState"):
+			enemy._onState(d["state"])
+	
 	
 
 func _moveEnemy(enemy,delta):

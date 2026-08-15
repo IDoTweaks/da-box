@@ -5,6 +5,7 @@ var dead := false
 var healthBar
 var healthFill
 var warnTween
+var animState := ""
 
 @onready var slamWarn = $slamWarn
 @onready var chargeWarn = $chargeWarn
@@ -58,12 +59,24 @@ var warnTween
 @export var clusterManager : Node3D
 @export var health = 2500
 
+@export var idleAnim := "Dracula1_MeleeEnemy_Idle"
+@export var walkAnim := "Dracula1_MeleeEnemy_Walk"
+@export var chargeWindAnim := "Dracula1_MeleeEnemy_Jump_Charge"
+@export var chargeAnim := "Dracula1_MeleeEnemy_Attack_charge_Loop"
+@export var slamWindAnim : = "Dracula1_MeleeEnemy_Attack_Swing_Right"
+@export var recoverAnim := "Dracula1_MeleeEnemy_Attack_recover_Loop"
+@export var animBlend := .15
+@export var loopingAnims : Array[String] = ["Dracula1_MeleeEnemy_Idle", "Dracula1_MeleeEnemy_Walk",
+"Dracula1_MeleeEnemy_Attack_charge_Loop", "Dracula1_MeleeEnemy_Attack_recover_Loop", "Dracula1_MeleeEnemy_Run_Loop"]
+
 @onready var explosionVfx = preload("res://particles/explosionVfx.tscn")
 @onready var healthBarScene = preload("res://Objects/healthBar.tscn")
+@onready var anim : AnimationPlayer = $Sketchfab_Scene/AnimationPlayer
 
 func _ready() -> void:
 	set_process(false)
 	maxHealth = health
+	_setUpAnims()
 	clusterManager._register(self)
 
 func _damage(amount) -> void:
@@ -86,6 +99,8 @@ func _reset():
 	dead = false
 	health = maxHealth
 	velocity = Vector3.ZERO
+	animState = ""
+	_play(idleAnim)
 	_hideWarns()
 	_hideHealthBar()
 	_updateHealthBar()
@@ -191,3 +206,37 @@ func _process(delta: float) -> void:
 	if cam == null:
 		return
 	healthBar.look_at(healthBar.global_position + (healthBar.global_position - cam.global_position))
+
+func _setUpAnims():
+	if anim == null:
+		return
+	for name in anim.get_animation_list():
+		var a = anim.get_animation(name)
+		a.loop_mode = Animation.LOOP_LINEAR if name in loopingAnims else Animation.LOOP_NONE
+	_play(idleAnim)
+	
+
+func _play(name, fitTime := 0.0):
+	if anim == null or name == "" or not anim.has_animation(name) or (anim.current_animation == name and anim.is_playing()):
+		return
+	var speed := 1.0
+	if fitTime> .05:
+		var len = anim.get_animation(name).length
+		if len > .01:
+			speed = len / fitTime
+	anim.play(name, animBlend, speed)
+	
+
+func _onState(state):
+	animState = state
+	if "attack" == state:
+		_play(walkAnim)
+	elif state == "chargeWind":
+		_play(chargeWindAnim, chargeWindUp)
+	elif state == "charge":
+		_play(chargeAnim)
+	elif state == "slamWind":
+		_play(slamWindAnim, slamWindUp)
+	else:
+		_play(recoverAnim)
+	
