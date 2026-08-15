@@ -1,15 +1,16 @@
-[gd_scene format=3]
+[gd_scene format=3 uid="uid://c3gajjcponkvu"]
 
-[ext_resource type="Script" path="res://Scripts/wave_manager.gd" id="1_wave"]
+[ext_resource type="Script" uid="uid://d1uu11t6oswam" path="res://Scripts/wave_manager.gd" id="1_wave"]
 [ext_resource type="PackedScene" path="res://Objects/zombie.tscn" id="2_wave"]
-[ext_resource type="PackedScene" path="res://Objects/drone.tscn" id="3_wave"]
-[ext_resource type="PackedScene" path="res://Objects/hawk.tscn" id="4_wave"]
+[ext_resource type="PackedScene" uid="uid://xdiocqwy80g1" path="res://Objects/drone.tscn" id="3_wave"]
+[ext_resource type="PackedScene" uid="uid://ct68u7krytw27" path="res://Objects/hawk.tscn" id="4_wave"]
+[ext_resource type="PackedScene" uid="uid://d32x3ga2efa77" path="res://Objects/miniboss.tscn" id="5_uj1yx"]
 
-[node name="waveManager" type="Node3D"]
+[node name="waveManager" type="Node3D" unique_id=1438656211]
 script = ExtResource("1_wave")
 level1 = Array[PackedScene]([ExtResource("2_wave")])
 level2 = Array[PackedScene]([ExtResource("2_wave")])
 level3 = Array[PackedScene]([ExtResource("3_wave")])
 level4 = Array[PackedScene]([ExtResource("2_wave"), ExtResource("3_wave"), ExtResource("4_wave")])
 level5 = Array[PackedScene]([ExtResource("2_wave"), ExtResource("3_wave"), ExtResource("4_wave")])
-level6 = Array[PackedScene]([ExtResource("2_wave"), ExtResource("3_wave")])
+level6 = Array[PackedScene]([ExtResource("5_uj1yx")])
