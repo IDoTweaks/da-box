@@ -7,6 +7,7 @@
 [ext_resource type="PackedScene" uid="uid://x3ls7hnetsvt" path="res://Objects/pauseMenu.tscn" id="6_i6g32"]
 [ext_resource type="Shader" uid="uid://bsfy5upklry81" path="res://shaders/gridWorld.gdshader" id="7_grid"]
 [ext_resource type="PackedScene" uid="uid://dmlsjewxrvhvx" path="res://Objects/deathScreen.tscn" id="7_v158k"]
+[ext_resource type="PackedScene" uid="uid://dhxi18grdqvlm" path="res://Objects/boneManager.tscn" id="8_v158k"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_box"]
 sky_top_color = Color(0.5019608, 0.6156863, 0.7882353, 1)
@@ -226,3 +227,5 @@ bossEveryWaves = 1
 [node name="NavigationRegion3D" type="NavigationRegion3D" parent="." unique_id=1898132346]
 transform = Transform3D(150, 0, 0, 0, 1, 0, 0, 0, 150, 0, -1, 0)
 navigation_mesh = SubResource("NavigationMesh_wrm1d")
+
+[node name="BoneManager" parent="." unique_id=1528047808 instance=ExtResource("8_v158k")]

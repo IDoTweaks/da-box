@@ -1,0 +1,24 @@
+[gd_scene format=3 uid="uid://dhxi18grdqvlm"]
+
+[ext_resource type="Script" uid="uid://cflc6yqo1lgvj" path="res://Scripts/bone_manager.gd" id="1_xmx2m"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_55yir"]
+albedo_color = Color(0.8901961, 0.8352941, 0.7647059, 1)
+roughness = 0.8
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_g82xa"]
+material = SubResource("StandardMaterial3D_55yir")
+radius = 0.09
+height = 0.8
+radial_segments = 6
+rings = 2
+
+[sub_resource type="MultiMesh" id="MultiMesh_4atce"]
+transform_format = 1
+mesh = SubResource("CapsuleMesh_g82xa")
+
+[node name="BoneManager" type="MultiMeshInstance3D" unique_id=1528047808]
+cast_shadow = 0
+custom_aabb = AABB(-160, -10, -160, 320, 80, 320)
+multimesh = SubResource("MultiMesh_4atce")
+script = ExtResource("1_xmx2m")
