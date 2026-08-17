@@ -60,7 +60,7 @@ var bones
 @export var hitHeight := 2.2
 @export var barHeight := 6.0
 @export var clusterManager : Node3D
-@export var health = 2500
+@export var health = 1000
 
 @export var boneRange := 34.0
 @export var boneMinRange := 10.0
