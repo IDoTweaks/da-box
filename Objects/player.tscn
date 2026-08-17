@@ -27,8 +27,9 @@ script = ExtResource("1_3y5cq")
 [node name="playerCam" type="Camera3D" parent="." unique_id=69693596]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.53849196, -0.20830381)
 
-[node name="shotgunManager" parent="playerCam" unique_id=429371704 node_paths=PackedStringArray("start") instance=ExtResource("5_x20fu")]
+[node name="shotgunManager" parent="playerCam" unique_id=429371704 node_paths=PackedStringArray("player", "start") instance=ExtResource("5_x20fu")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.006330192, -0.89754426)
+player = NodePath("../..")
 start = NodePath("../shotGun/shotgunEnd")
 
 [node name="shotGun" parent="playerCam" unique_id=412888752 instance=ExtResource("1_y0qk3")]

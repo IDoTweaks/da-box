@@ -39,7 +39,7 @@ func _shoot(aimPoint : Vector3):
 		var angle = randf() * TAU
 		var dist = maxAngle * pow(randf(), coreBias)
 		var dir = (baseDir + right * cos(angle) * dist + up * dist * sin(angle)).normalized()
-		bulletManager._spawn(origin, dir * speed,dmg,bulletGravity,bulletLife,bounces,bulletSize)
+		bulletManager._spawn(origin, dir * speed,shotDmg,bulletGravity,bulletLife,bounces,bulletSize)
 		
 	
 	
