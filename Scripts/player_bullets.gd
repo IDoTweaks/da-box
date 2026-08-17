@@ -1,7 +1,7 @@
 extends MultiMeshInstance3D
 
 @export var maxBullets := 512
-@export var hitMask := 5
+@export var hitMask := 1
 @export var groundY := -5.0
 @export var trailScale := 1.0
 @export var bounceSpeedLoss := .85
@@ -93,7 +93,7 @@ func _physics_process(delta: float) -> void:
 			var pad = (bullSize[i] - 1) * sizePad
 			var idx = cluster._virtualAt(from,dir,maxT,pad)
 			var vT = cluster.virtHitT if idx != -1 else INF
-			var body = cluster._bodyAT(from, dir, maxT, pad)
+			var body = cluster._bodyAt(from, dir, maxT, pad)
 			var bT = cluster.bodyHitT if body != null else INF
 			if idx != -1 and vT <= bT:
 				cluster._damageVirtual(idx, bullDmg[i])

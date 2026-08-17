@@ -116,7 +116,7 @@ func _waveCount(n):
 	return int(min(baseCount * pow(countGrowth, n - 1), maxWaveCount))
 
 func _healthMult():
-	return 1 + healthGrowth * (waveNumber - 1) * enemyHealthMult
+	return (1 + healthGrowth * (waveNumber - 1)) * enemyHealthMult
 
 func _maxLevel():
 	return clamp(1 + int((waveNumber - 1) / levelEveryWaves), 1, topLevel)

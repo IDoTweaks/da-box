@@ -99,6 +99,7 @@ func _setFace(i,up):
 func _open(caller,waveNum):
 	timer.start()
 	waves = caller
+	picksLeft = picks
 	_roll()
 	title.text = "wave " + str(waveNum)
 	visible = true
@@ -117,6 +118,12 @@ func _pick(slot):
 	if upgrades == null:
 		upgrades = get_tree().get_first_node_in_group("upgradeManager")
 	upgrades.call(cards[shown[slot]]["effect"])
+	picksLeft -= 1
+	if picksLeft > 0:
+		canPick = false
+		timer.start()
+		_roll()
+		return
 	_close()
 	waves._onCardPicked()
 
