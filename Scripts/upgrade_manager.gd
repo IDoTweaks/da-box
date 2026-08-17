@@ -80,10 +80,30 @@ func _heatResistanceUpgrade():
 	player.maxSpeed += player.maxSpeed / 5
 	return "makes you clothing more heat resistant allowing you to achive higher speeds"
 
-func _ammoDrop():
+func _ammoDropUpgrade():
 	shotgunManager.bullets += randi_range(1,3)
 	shotgunManager.spread += 1.5
 	return "get foreign aid but from one guy and his almost empty stock of bullets"
+
+func _windUpUpgrade():
+	shotgunManager.speed *= 1.35
+	shotgunManager.bulletGravity *= .85
+	return "the dev of this game decided to straight up steal cards from rounds so you now have faster bullets"
+	
+
+func _barrelDietUpgrade():
+	shotgunManager.spread = maxf(shotgunManager.spread * .65, .15)
+	return "your barrel started a diet making the bullet spread to go down"
+
+func _thrusterUpgrade():
+	shotgunManager.recoil *= 1.5
+	shotgunManager.speed *= 1.1
+	return "you stole a thruster from nasa and put it on your gun"
+
+func _longBarrelUpgrade():
+	shotgunManager.bulletLife == 1.0
+	shotgunManager.speed *= 1.2
+	return "compensating for something? yes do bullets fly further? also yes"
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
