@@ -19,6 +19,9 @@ var lookedAt = null
 var shotgunRest : Vector3
 var sizeTween = null
 var cluster
+var lifesteal := 0.0
+var regen := 0.0
+var damageTakenMult := 1.0
 
 @export var explosionFallOff := 1.5
 @export var deafualtShotgunForce := 25.0
@@ -26,6 +29,7 @@ var cluster
 @export var friction := 35.0
 @export var maxSpeed := 40.0
 @export var health := 100.0
+@export var maxHealth := 100.0
 @export var size := 1.0
 @export var debugSizeStep := .1
 @export var sizeTime := .25
@@ -172,6 +176,8 @@ func _applyImpulse(point,dir : Vector3, strength):
 func _physics_process(delta: float) -> void:
 	if dead:
 		return
+	if regen > 0 and health < maxHealth:
+		health = minf(health + regen * delta,maxHealth)
 	_updateLookedAt()
 	if Input.is_action_just_pressed("leftClick") and not onCd:
 		_fireShotgun()
@@ -248,14 +254,21 @@ func _explosionDamage(point,damage):
 func _damage(amount):
 	if dead:
 		return
-	health -= amount
+	health -= amount * damageTakenMult
 	_updateGui()
 	if health <= 0:
 		_die()
 
 func _updateGui():
+	guiCanvas.maxHealth = maxHealth
 	guiCanvas.health = health
 	guiCanvas._update()
+
+func _heal(amount):
+	if dead or amount <= 0:
+		return
+	health = minf(health + amount, maxHealth)
+	_updateGui()
 
 func _getGravity():
 	return get_gravity() * gravityMult
@@ -271,8 +284,10 @@ func _die():
 	screen._open()
 	
 
-func _onBulletHit():
+func _onBulletHit(dmgDealt := 0.0):
 	guiCanvas._hitMarker()
+	if lifesteal > 0:
+		_heal(dmgDealt * lifesteal)
 
 func _on_shotgun_cd_timeout() -> void:
 	onCd = false

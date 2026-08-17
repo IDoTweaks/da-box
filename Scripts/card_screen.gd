@@ -33,6 +33,8 @@ var faceUp = [false,false,false]
 var tweens = [null,null,null]
 var timer : Timer
 var canPick = false
+var picks := 1
+var picksLeft := 0
 
 @onready var title = $dim/title
 @onready var buttons = [$dim/row/card0,$dim/row/card1,$dim/row/card2]

@@ -56,6 +56,10 @@ var virtHitT := 0.0
 var virtBar
 var virtbarFill
 var bodyOnly := false
+var bossDmgMult := 1.0
+var bodyHitT := 0.0
+var bodyDmgMult := 1.0
+var enemySpeedMult := 1.0
 
 var virtPos : PackedVector3Array
 var virtHealth : PackedFloat32Array
@@ -114,7 +118,7 @@ func _register(enemy):
 	var stats := {}
 	for key in DEAFULTS:
 		stats[key] = _stat(enemy,key)
-
+	stats["moveSpeed"] *= enemySpeedMult
 	var model = enemy.get_node_or_null("model")
 	var rays := {}
 	if stats["flying"]:
@@ -142,7 +146,9 @@ func _register(enemy):
 		"diveTimer" : 0.0,
 		"divePoint" : Vector3.ZERO,
 		"model" : model,
-		"modelRest" : model.transform if model != null else Transform3D()
+		"modelRest" : model.transform if model != null else Transform3D(),
+		"hitRadius" : enemy.get("hitRadius") if enemy.get("hitRadius") else .9,
+		"hitY" : enemy.get("hitHeight") if enemy.get("hitHeight") else 0.0,
 	}
 	if stats["charger"]:
 		data[enemy]["chg"] = _chargerData(enemy)
@@ -253,7 +259,7 @@ func _registerType(scene) -> int:
 		"scene": scene,
 		"mesh": mesh,
 		"meshXform": meshXform,
-		"speed": _stat(temp,"moveSpeed"),
+		"speed": _stat(temp,"moveSpeed") * enemySpeedMult,
 		"flying": _stat(temp,"flying"),
 		"hover": _stat(temp,"hoverHeight"),
 		"orbit": _stat(temp,"ringRadius") if _stat(temp,"diving") else 0.0,
@@ -327,7 +333,7 @@ func _virtDie(i):
 	virtHealth[i] = 0
 	kills += 1
 
-func _virtualAt(from: Vector3, dir : Vector3,maxDist:float):
+func _virtualAt(from: Vector3, dir : Vector3,maxDist:float, pad := 0.0):
 	virtHitT = -1
 	if virtPos.is_empty():
 		return -1
@@ -356,7 +362,7 @@ func _virtualAt(from: Vector3, dir : Vector3,maxDist:float):
 					var t = rel.dot(dir)
 					if t < 0 or t > maxDist:
 						continue
-					var r = vt["hitRadius"]
+					var r = vt["hitRadius"] + pad
 					if (from + dir*t).distance_squared_to(center) <= r * r and t < bestT:
 						bestI = idx
 						bestT = t
@@ -366,8 +372,42 @@ func _virtualAt(from: Vector3, dir : Vector3,maxDist:float):
 	return bestI
 	
 
-func _pelletHit(from : Vector3, dir : Vector3, maxDist : float, dmg) -> float:
-	var idx = _virtualAt(from,dir,maxDist)
+func _bodyAt(from:Vector3, dir:Vector3,maxDist,pad):
+	bodyHitT = -1
+	if enemies.is_empty():
+		return null
+	var best
+	var bestT = INF
+	var base = _cellOf(from + dir * (maxDist * .5))
+	for x in range(-1,2):
+		for z in range(-1, 2):
+			var cell = base + Vector2i(x,z)
+			if not grid.has(cell):
+				continue
+			for e in grid[cell]:
+				if not data.has(e):
+					continue
+				var d = data[e]
+				var center = e.global_position
+				center.y += d["hitY"]
+				var rel = center - from
+				var t = rel.dot(dir)
+				if t <0 or t > maxDist:
+					continue
+				var r = d["hitRadius"] + pad
+				if (from + dir*t).distance_squared_to(center) <= r * r and t < bestT:
+					bestT = target
+					best = e
+				
+			
+	if best == null:
+		return null
+	bodyHitT = bestT
+	return best
+	
+
+func _pelletHit(from : Vector3, dir : Vector3, maxDist : float, dmg, pad) -> float:
+	var idx = _virtualAt(from,dir,maxDist,pad)
 	if idx == -1:
 		return -1
 	_damageVirtual(idx,dmg)
@@ -394,7 +434,14 @@ func _hideVirtBar():
 	if virtBar:
 		virtBar.visible = false
 
+func _damageBody(body, dmg):
+	if bossDmgMult != 1 and body.get("isBoss") == true:
+		dmg *= bossDmgMult
+	body._damage(dmg)
+
 func _damageVirtual(i,dmg):
+	if bossDmgMult != 1 and virtTypes[virtType[i]]["boss"]:
+		dmg *= bossDmgMult
 	virtHealth[i] -= dmg
 	if virtHealth[i] <= 0:
 		_virtDie(i)

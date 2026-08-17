@@ -1,6 +1,7 @@
 extends Node3D
 
 var waveNumber = 0
+var enemyHealthMult := 1.0
 var killBase = 0
 var waveQuota = 0
 var spawnTimer = 0.0
@@ -115,7 +116,7 @@ func _waveCount(n):
 	return int(min(baseCount * pow(countGrowth, n - 1), maxWaveCount))
 
 func _healthMult():
-	return 1 + healthGrowth * (waveNumber - 1)
+	return 1 + healthGrowth * (waveNumber - 1) * enemyHealthMult
 
 func _maxLevel():
 	return clamp(1 + int((waveNumber - 1) / levelEveryWaves), 1, topLevel)

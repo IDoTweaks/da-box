@@ -5,6 +5,7 @@ extends MultiMeshInstance3D
 @export var groundY := -5.0
 @export var trailScale := 1.0
 @export var bounceSpeedLoss := .85
+@export var sizePad := .35
 
 var bullPos : PackedVector3Array
 var bullVel : PackedVector3Array
@@ -12,6 +13,7 @@ var bullLife : PackedFloat32Array
 var bullDmg : PackedFloat32Array
 var bullGrav : PackedFloat32Array
 var bullBounce : PackedInt32Array
+var bullSize : PackedFloat32Array
 var count := 0
 var cluster
 var player
@@ -28,6 +30,7 @@ func _ready() -> void:
 	bullDmg.resize(maxBullets)
 	bullGrav.resize(maxBullets)
 	bullBounce.resize(maxBullets)
+	bullSize.resize(maxBullets)
 	ray =PhysicsRayQueryParameters3D.new()
 	ray.collision_mask = hitMask
 	mm = multimesh
@@ -36,7 +39,7 @@ func _ready() -> void:
 	mm.visible_instance_count = 0
 	
 
-func _spawn(pos: Vector3,vel : Vector3, dmg, grav, life, bounces = 0):
+func _spawn(pos: Vector3,vel : Vector3, dmg, grav, life, bounces = 0, size := 1.0):
 	if count >= maxBullets:
 		return
 	bullPos[count] = pos
@@ -45,6 +48,7 @@ func _spawn(pos: Vector3,vel : Vector3, dmg, grav, life, bounces = 0):
 	bullGrav[count] = grav
 	bullLife[count] = life
 	bullBounce[count] = bounces
+	bullSize[count] = size
 	count +=1
 	
 
@@ -56,7 +60,7 @@ func _swapOut(i):
 	bullGrav[i] = bullGrav[count]
 	bullLife[i] = bullLife[count]
 	bullBounce[i] = bullBounce[count]
-	
+	bullSize[i] = bullSize[count]
 
 func _physics_process(delta: float) -> void:
 	if count == 0:
@@ -68,6 +72,7 @@ func _physics_process(delta: float) -> void:
 		player = cluster.target
 	var space = get_world_3d().direct_space_state
 	var didHit := false
+	var hitDmg := 0.0
 	var i := 0
 	while i < count:
 		bullVel[i].y -= bullGrav[i] * delta
@@ -81,34 +86,37 @@ func _physics_process(delta: float) -> void:
 			var dir = seg / dist
 			ray.from = from
 			ray.to = to
-			var hit = space.intersect_ray(ray)
+			var wall = space.intersect_ray(ray)
 			var maxT = dist
-			var body
-			if hit:
-				maxT = from.distance_to(hit["position"])
-				body = hit["collider"]
-				
-			var t = -1
-			t = cluster._pelletHit(from, dir, maxT, bullDmg[i])
-			if t > 0:
-				to = from + dir*t
+			if wall:
+				maxT = from.distance_to(wall["position"])
+			var pad = (bullSize[i] - 1) * sizePad
+			var idx = cluster._virtualAt(from,dir,maxT,pad)
+			var vT = cluster.virtHitT if idx != -1 else INF
+			var body = cluster._bodyAT(from, dir, maxT, pad)
+			var bT = cluster.bodyHitT if body != null else INF
+			if idx != -1 and vT <= bT:
+				cluster._damageVirtual(idx, bullDmg[i])
+				to = from + dir*vT
 				gone = true
 				didHit = true
+				hitDmg += bullDmg[i]
 			elif  body:
-				if body.has_method("_damage"):
-					body._damage(bullDmg[i])
-					didHit = true
-					to = hit["position"]
-					gone = true
-				elif bullBounce[i] > 0:
-					bullBounce[i] -= i
-					var normal = hit["normal"]
+				cluster._damageBody(body, bullDmg[i])
+				to = from + dir*bT
+				didHit = true
+				hitDmg += bullDmg[i]
+				gone = true
+			elif wall:
+				if bullBounce[i] > 0:
+					bullBounce[i] -= 1
+					var normal = wall["normal"]
 					bullVel[i] = bullVel[i].bounce(normal) * bounceSpeedLoss
-					to = hit["position"] + normal * .05
+					to = wall["position"] + normal * .05
 					gone = bullLife[i] <= 0
 					
 				else:
-					to = hit["position"]
+					to = wall["position"]
 					gone = true
 				
 				
@@ -128,12 +136,13 @@ func _physics_process(delta: float) -> void:
 		else:
 			side = side.normalized()
 		var bas = Basis(side, fwd.cross(side),fwd)
-		mm.set_instance_transform(i, Transform3D(bas.scaled(Vector3(1,1, trailScale)), to))
+		var size = bullSize[i]
+		mm.set_instance_transform(i, Transform3D(bas.scaled(Vector3(size,size, size)), to))
 		i+= 1
 		
 	mm.visible_instance_count = count
-	if didHit and player.has_method("_onBulletHit"):
-		player._onBulletHit()
+	if didHit:
+		player._onBulletHit(hitDmg)
 	
 	
 	

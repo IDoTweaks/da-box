@@ -45,7 +45,7 @@ func _fire():
 	if body != null:
 		aimBody = body
 		_tracer(body.global_position)
-		body._damage(_hitDamage(body.maxHealth))
+		cluster._damageBody(body, _hitDamage(body.maxHealth))
 		return
 	var idx = cluster._nearestVirtual(global_position, fireRange)
 	if idx == -1:
