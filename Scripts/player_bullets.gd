@@ -2,14 +2,16 @@ extends MultiMeshInstance3D
 
 @export var maxBullets := 512
 @export var hitMask := 5
-@export var groundY := -.9
+@export var groundY := -5.0
 @export var trailScale := 1.0
+@export var bounceSpeedLoss := .85
 
 var bullPos : PackedVector3Array
 var bullVel : PackedVector3Array
 var bullLife : PackedFloat32Array
 var bullDmg : PackedFloat32Array
 var bullGrav : PackedFloat32Array
+var bullBounce : PackedInt32Array
 var count := 0
 var cluster
 var player
@@ -25,6 +27,7 @@ func _ready() -> void:
 	bullLife.resize(maxBullets)
 	bullDmg.resize(maxBullets)
 	bullGrav.resize(maxBullets)
+	bullBounce.resize(maxBullets)
 	ray =PhysicsRayQueryParameters3D.new()
 	ray.collision_mask = hitMask
 	mm = multimesh
@@ -33,7 +36,7 @@ func _ready() -> void:
 	mm.visible_instance_count = 0
 	
 
-func _spawn(pos: Vector3,vel : Vector3, dmg, grav, life):
+func _spawn(pos: Vector3,vel : Vector3, dmg, grav, life, bounces = 0):
 	if count >= maxBullets:
 		return
 	bullPos[count] = pos
@@ -41,6 +44,7 @@ func _spawn(pos: Vector3,vel : Vector3, dmg, grav, life):
 	bullDmg[count] = dmg
 	bullGrav[count] = grav
 	bullLife[count] = life
+	bullBounce[count] = bounces
 	count +=1
 	
 
@@ -51,6 +55,7 @@ func _swapOut(i):
 	bullDmg[i] = bullDmg[count]
 	bullGrav[i] = bullGrav[count]
 	bullLife[i] = bullLife[count]
+	bullBounce[i] = bullBounce[count]
 	
 
 func _physics_process(delta: float) -> void:
@@ -90,11 +95,22 @@ func _physics_process(delta: float) -> void:
 				gone = true
 				didHit = true
 			elif  body:
-				to = hit["position"]
-				gone = true
 				if body.has_method("_damage"):
 					body._damage(bullDmg[i])
 					didHit = true
+					to = hit["position"]
+					gone = true
+				elif bullBounce[i] > 0:
+					bullBounce[i] -= i
+					var normal = hit["normal"]
+					bullVel[i] = bullVel[i].bounce(normal) * bounceSpeedLoss
+					to = hit["position"] + normal * .05
+					gone = bullLife[i] <= 0
+					
+				else:
+					to = hit["position"]
+					gone = true
+				
 				
 		bullPos[i] = to
 		if gone:
