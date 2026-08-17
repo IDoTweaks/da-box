@@ -61,7 +61,6 @@ func _physics_process(delta: float) -> void:
 	if cluster == null:
 		cluster = get_tree().get_first_node_in_group("clusterManager")
 		player = cluster.target
-	mm.visible_instance_count = count
 	var space = get_world_3d().direct_space_state
 	var didHit := false
 	var i := 0
@@ -116,6 +115,9 @@ func _physics_process(delta: float) -> void:
 		mm.set_instance_transform(i, Transform3D(bas.scaled(Vector3(1,1, trailScale)), to))
 		i+= 1
 		
+	mm.visible_instance_count = count
+	if didHit and player.has_method("_onBulletHit"):
+		player.onBulletHit()
 	
 	
 	
