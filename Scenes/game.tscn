@@ -218,6 +218,7 @@ target = NodePath("../player")
 target = NodePath("../player")
 clusterManager = NodePath("../ClusterManager")
 baseCount = 1
+countGrowth = 1.25
 
 [node name="cardScreen" parent="." unique_id=1889281573 instance=ExtResource("6_card")]
 
