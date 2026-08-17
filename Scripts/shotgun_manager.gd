@@ -3,7 +3,7 @@ extends Node3D
 @export var bullets := 1
 @export var spread := 1.5
 @export var coreBias := 1.0
-@export var dmg := 25
+@export var dmg := 25.0
 @export var speed := 45.0
 @export var bulletGravity := 25.0
 @export var bulletLife := 3.0
@@ -31,7 +31,7 @@ func _shoot(aimPoint : Vector3):
 	for i in bullets:
 		var angle = randf() * TAU
 		var dist = maxAngle * pow(randf(), coreBias)
-		var dir = (baseDir + right * cos(angle) * dist + up * dist).normalized()
+		var dir = (baseDir + right * cos(angle) * dist + up * dist * sin(angle)).normalized()
 		bulletManager._spawn(origin, dir * speed,dmg,bulletGravity,bulletLife)
 		
 	
