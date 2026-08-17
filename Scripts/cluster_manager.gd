@@ -396,7 +396,7 @@ func _bodyAt(from:Vector3, dir:Vector3,maxDist,pad):
 					continue
 				var r = d["hitRadius"] + pad
 				if (from + dir*t).distance_squared_to(center) <= r * r and t < bestT:
-					bestT = target
+					bestT = t
 					best = e
 				
 			
