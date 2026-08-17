@@ -81,9 +81,8 @@ func _heatResistanceUpgrade():
 	return "makes you clothing more heat resistant allowing you to achive higher speeds"
 
 func _ammoDrop():
-	shotgunManager.bullets += randi_range(1,7)
-	shotgunManager.raysManager.bullets = shotgunManager.bullets
-	shotgunManager.raysManager._createRays()
+	shotgunManager.bullets += randi_range(1,3)
+	shotgunManager.spread += 1.5
 	return "get foreign aid but from one guy and his almost empty stock of bullets"
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.

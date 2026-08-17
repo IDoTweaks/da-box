@@ -1,52 +1,41 @@
 extends Node3D
 
-@onready var raysManager = $rays
-@export var bullets: int
-@export var spread : float
-@export var reach : float
-@export var dmg: int
-@export var hitMask : int
-@export var coreBias : float
+@export var bullets := 1
+@export var spread := 1.5
+@export var coreBias := 1.0
+@export var dmg := 25
+@export var speed := 45.0
+@export var bulletGravity := 25.0
+@export var bulletLife := 3.0
+@export var recoil := 20.0
 @export var start : Node3D
 
-var cluster = null
+var bulletManager
+
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	raysManager.bullets = bullets
-	raysManager.reach = reach
-	raysManager.spread = spread
-	raysManager.hitMask = hitMask
-	raysManager.coreBias = coreBias
-	raysManager._createRays()
-	raysManager._randomizeRays()
+	pass
 
-func _shoot():
-	if cluster == null:
-		cluster = get_tree().get_first_node_in_group("clusterManager")
-	raysManager._randomizeRays()
-	var hits = 0
-	var rays = raysManager.rays
-	for ray : RayCast3D in rays:
-		ray.force_raycast_update()
-		ray.start = start.global_position
-		var from = ray.global_position
-		var end = ray.to_global(ray.target_position)
-		var dir = (end - from).normalized()
-		var stop = ray.get_collision_point() if ray.is_colliding() else end
-		var hit = ray.get_collider() if ray.is_colliding() else null
-		var t = -1
-		if cluster != null:
-			t = cluster._pelletHit(from,dir, from.distance_to(stop), dmg)
-		if t > 0:
-			stop = from + dir * t
-			hits +=1
-		elif hit and hit.has_method("_damage"):
-			hit._damage(dmg)
-			hits +=1
-		ray._summonBullet(stop)
+func _shoot(aimPoint : Vector3):
+	if bulletManager == null:
+		bulletManager = get_tree().get_first_node_in_group("playerBullets")
+	var origin = start.global_position
+	var baseDir = aimPoint - origin
+	if baseDir.length_squared() < .0001:
+		baseDir = -global_transform.basis.z
+	baseDir = baseDir.normalized()
+	var right = global_transform.basis.x
+	var up = global_transform.basis.y
+	var maxAngle = deg_to_rad(spread)
+	for i in bullets:
+		var angle = randf() * TAU
+		var dist = maxAngle * pow(randf(), coreBias)
+		var dir = (baseDir + right * cos(angle) * dist + up * dist).normalized()
+		bulletManager._spawn(origin, dir * speed,dmg,bulletGravity,bulletLife)
 		
-	return hits
+	
+	
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.

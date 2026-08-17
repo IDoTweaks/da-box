@@ -129,11 +129,14 @@ func _unhandled_input(event: InputEvent) -> void:
 
 func _fireShotgun() -> void:
 	ray.force_raycast_update()
-	var point : Vector3
+	var kickPoint = ray.to_global(ray.target_position)
 	if ray.is_colliding():
-		point = ray.get_collision_point()
-	else:
-		point = rayEnd.global_position
+		kickPoint = ray.get_collision_point()
+	var aimPoint = lookRay.to_global(lookRay.target_position)
+	if lookRay.is_colliding():
+		aimPoint = lookRay.get_collision_point()
+	
+	
 	var tween = create_tween()
 	tween.tween_property(playerCam,"fov",DEAFULTFOV + 5,0.1)
 	tween.tween_property(playerCam,"fov",DEAFULTFOV,0.1)
@@ -145,10 +148,8 @@ func _fireShotgun() -> void:
 	temp.global_position = shotgunEnd.global_position
 	temp.emitting = true
 	
-	var hits = shotgunManager._shoot()
-	if hits > 0:
-		guiCanvas._hitMarker()
-	_applyImpulse(point,global_position - point, deafualtShotgunForce * kbMult)
+	shotgunManager._shoot(aimPoint)
+	_applyImpulse(kickPoint,global_position - kickPoint, shotgunManager.recoil * kbMult)
 
 func _applyForceDecay(i,delta):
 	forcesX[i] = move_toward(forcesX[i], 0, forceDecay[i] * delta)
@@ -269,6 +270,9 @@ func _die():
 	var screen = get_tree().get_first_node_in_group("deathScreen")
 	screen._open()
 	
+
+func _onBulletHit():
+	guiCanvas._hitMarker()
 
 func _on_shotgun_cd_timeout() -> void:
 	onCd = false

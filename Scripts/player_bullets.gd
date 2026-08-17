@@ -117,14 +117,14 @@ func _physics_process(delta: float) -> void:
 		
 	mm.visible_instance_count = count
 	if didHit and player.has_method("_onBulletHit"):
-		player.onBulletHit()
+		player._onBulletHit()
 	
 	
 	
 
 #test without left click cause im too fucking scared to break something
-func _input(event: InputEvent) -> void:
-	if event is InputEventKey and event.pressed and event.keycode == KEY_N:
-		var cam = get_viewport().get_camera_3d()
-		_spawn(cam.global_position, -cam.global_transform.basis.z * 45,25,25,3)
-	
+#func _input(event: InputEvent) -> void:
+#	if event is InputEventKey and event.pressed and event.keycode == KEY_N:
+#		var cam = get_viewport().get_camera_3d()
+#		_spawn(cam.global_position, -cam.global_transform.basis.z * 45,25,25,3)
+#	

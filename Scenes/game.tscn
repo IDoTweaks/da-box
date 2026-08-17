@@ -217,7 +217,7 @@ target = NodePath("../player")
 [node name="waveManager" parent="." unique_id=223766283 node_paths=PackedStringArray("target", "clusterManager") instance=ExtResource("5_wave")]
 target = NodePath("../player")
 clusterManager = NodePath("../ClusterManager")
-bossEveryWaves = 1
+baseCount = 1
 
 [node name="cardScreen" parent="." unique_id=1889281573 instance=ExtResource("6_card")]
 
