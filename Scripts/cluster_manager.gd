@@ -158,6 +158,9 @@ func _chargerData(enemy):
 	var cMin = _num(enemy,"chargeMinRange", 9.0)
 	var cool = _num(enemy,"chargeCooldown", 4.0) #not so cool but cd is use elsewhere -_-
 	var slamCool = _num(enemy, "slamCooldown", 5.0)
+	var boneRange = _num(enemy, "boneRange", 34.0)
+	var boneMin = _num(enemy, "boneMinRange", 10.0)
+	var boneCool = _num(enemy, "boneCooldown", 6.0)
 	
 	return {
 		"rangeSq" : cRange * cRange,
@@ -174,6 +177,12 @@ func _chargerData(enemy):
 		"slamRecover" : _num(enemy,"slamRecover", 1.0),
 		"slamCool" : slamCool,
 		"slamCd" : slamCool * .5,
+		"boneRangeSq" : boneRange * boneRange,
+		"boneMinSq" : boneMin * boneMin,
+		"boneWind" : _num(enemy,"boneWindUp", .85),
+		"boneRecover" : _num(enemy,"boneRecover", .9),
+		"boneCool" : boneCool,
+		"boneCd" : boneCool * .35,
 		"last" : "",
 		"timer" : 0.0,
 		"cd" : cool * .5,
@@ -950,6 +959,7 @@ func _moveCharger(enemy,d,s,delta):
 	var pushed = true
 	c["cd"] -= delta
 	c["slamCd"] -= delta
+	c["boneCd"] -= delta
 	
 	if state == "attack":
 		var slamReach = c["slam"] + targetRadius
@@ -963,6 +973,11 @@ func _moveCharger(enemy,d,s,delta):
 			c["timer"] = c["wind"]
 			if enemy.has_method("_telegraphCharge"):
 				enemy._telegraphCharge(c["wind"])
+		elif c["boneCd"] <= 0 and distSqrd <= c["boneRangeSq"] and distSqrd >= c["boneMinSq"]:
+			d["state"] = "boneWind"
+			c["timer"] = c["boneWind"]
+			if enemy.has_method("_telegraphBones"):
+				enemy._telegraphBones(c["boneWind"])
 		else:
 			dir = _chargerStep(enemy,d)
 	elif  state == "chargeWind":
@@ -984,7 +999,14 @@ func _moveCharger(enemy,d,s,delta):
 			d["state"] = "recover"
 			c["timer"] = c["slamRecover"]
 			c["slamCd"] = c["slamCool"]
-	
+	elif  state == "boneWind":
+		c["timer"] -= delta
+		if c["timer"] <= 0:
+			if enemy.has_method("_throwBones"):
+				enemy._throwBones(target)
+			d["state"] = "recover"
+			c["timer"] = c["boneRecover"]
+			c["boneCd"] = c["boneCool"]
 	elif state == "charge":
 		dir = c["dir"]
 		speed = c["speed"]

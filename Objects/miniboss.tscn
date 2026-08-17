@@ -29,6 +29,16 @@ albedo_color = Color(0.69552606, 0.11583183, 3.85046e-07, 1)
 material = SubResource("StandardMaterial3D_ysrxt")
 size = Vector3(3.4, 0.06, 1)
 
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_oc456"]
+transparency = 1
+cull_mode = 2
+shading_mode = 0
+albedo_color = Color(0.7647059, 0.6901961, 0.5254902, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_t5oj2"]
+material = SubResource("StandardMaterial3D_oc456")
+size = Vector3(3.4, 0.06, 1)
+
 [node name="Miniboss" type="CharacterBody3D" unique_id=1042941783]
 collision_layer = 4
 script = ExtResource("1_od3cu")
@@ -50,3 +60,11 @@ mesh = SubResource("CylinderMesh_ysrxt")
 visible = false
 cast_shadow = 0
 mesh = SubResource("BoxMesh_oc456")
+
+[node name="boneWarn" type="MeshInstance3D" parent="." unique_id=508612687]
+visible = false
+cast_shadow = 0
+mesh = SubResource("BoxMesh_t5oj2")
+
+[node name="throwPoint" type="Marker3D" parent="." unique_id=1846945058]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4, 1)

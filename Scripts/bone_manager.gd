@@ -105,19 +105,6 @@ func _physics_process(delta: float) -> void:
 	
 	
 
-#testing+_+
-
-func _input(event: InputEvent) -> void:
-	if event is InputEventKey and event.pressed and event.keycode == KEY_B:
-		var cam = get_viewport().get_camera_3d()
-		var origin = cam.global_position + Vector3(0, 3,0) - cam.global_transform.basis.z * 12.0
-		for i in 7:
-			var t = float(i) / 6.0 * 2 - 1
-			var dir = (cam.global_position- origin)
-			dir.y = 0
-			dir = dir.normalized().rotated(Vector3.UP, t * deg_to_rad(24))
-			_spawn(origin, dir * 26.0 + Vector3.UP * 6.0, 16.0, 24.0)
-
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:

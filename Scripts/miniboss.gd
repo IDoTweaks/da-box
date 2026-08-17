@@ -6,9 +6,12 @@ var healthBar
 var healthFill
 var warnTween
 var animState := ""
+var bones
 
 @onready var slamWarn = $slamWarn
 @onready var chargeWarn = $chargeWarn
+@onready var boneWarn = $boneWarn
+@onready var throwPoint = $throwPoint
 
 @export var level := 6
 @export var isBoss := true
@@ -59,11 +62,26 @@ var animState := ""
 @export var clusterManager : Node3D
 @export var health = 2500
 
+@export var boneRange := 34.0
+@export var boneMinRange := 10.0
+@export var boneCooldown := 6.0
+@export var boneWindUp := .85
+@export var boneRecover := .9
+@export var boneCount := 7
+@export var boneSpread := 24.0
+@export var boneSpeed := 26.0
+@export var boneArc := 6.0
+@export var boneSpeedJitter := .12
+@export var boneDmg := 16.0
+@export var boneKnockback := 24.0
+@export var boneOriginJitter := .35
+
 @export var idleAnim := "Dracula1_MeleeEnemy_Idle"
 @export var walkAnim := "Dracula1_MeleeEnemy_Walk"
 @export var chargeWindAnim := "Dracula1_MeleeEnemy_Jump_Charge"
 @export var chargeAnim := "Dracula1_MeleeEnemy_Attack_charge_Loop"
 @export var slamWindAnim : = "Dracula1_MeleeEnemy_Attack_Swing_Right"
+@export var throwAnim := "Dracula1_MeleeEnemy_Attack_Swing_left"
 @export var recoverAnim := "Dracula1_MeleeEnemy_Attack_recover_Loop"
 @export var animBlend := .15
 @export var loopingAnims : Array[String] = ["Dracula1_MeleeEnemy_Idle", "Dracula1_MeleeEnemy_Walk",
@@ -145,6 +163,32 @@ func _slam(targ):
 	targ._applyImpulse(global_position, (dir + Vector3.UP * slamUpBias).normalized(), slamKnockback)
 	
 
+func _throwBones(targ):
+	if dead:
+		return
+	_hideWarns()
+	if bones == null:
+		bones = get_tree().get_first_node_in_group("boneManager")
+	var origin = throwPoint.global_position
+	var flat = targ.global_position - origin
+	flat.y = 0
+	if flat.length_squared() < .0001:
+		flat = -global_transform.basis.z
+	flat = flat.normalized()
+	var half = deg_to_rad(boneSpread)
+	var side = flat.cross(Vector3.UP)
+	for i in boneCount:
+		var t = 0.0 if boneCount == 1 else float(i) / float(boneCount - 1) * 2 - 1
+		var dir = flat.rotated(Vector3.UP, t * half)
+		var speed = boneSpeed * (1 + randf_range(-boneSpeedJitter, boneSpeedJitter))
+		var vel = dir * speed + Vector3.UP * boneArc
+		bones._spawn(origin + side * t * boneOriginJitter, vel,boneDmg,boneKnockback)
+		
+	
+	
+	
+
+
 func _flashWarn(node, duration):
 	if warnTween != null and warnTween.is_valid():
 		warnTween.kill()
@@ -165,12 +209,22 @@ func _telegraphSlam(duration):
 	slamWarn.scale = Vector3(slamRadius,1,slamRadius)
 	_flashWarn(slamWarn, duration)
 
+func _telegraphBones(duration):
+	var width = 2 * boneRange * tan(deg_to_rad(boneSpread))
+	boneWarn.position = Vector3(0,.07, boneRange * .5)
+	boneWarn.scale = Vector3(width / 3.4,1,boneRange)
+	
+	
+
+
+
 func _hideWarns():
 	if warnTween != null and warnTween.is_valid():
 		warnTween.kill()
 	warnTween = null
 	slamWarn.visible = false
 	chargeWarn.visible = false
+	boneWarn.visible = false
 
 func _telegraph(duration):
 	#add here a growl
@@ -237,6 +291,8 @@ func _onState(state):
 		_play(chargeAnim)
 	elif state == "slamWind":
 		_play(slamWindAnim, slamWindUp)
+	elif state == "boneWind":
+		_play(throwAnim, boneWindUp)
 	else:
 		_play(recoverAnim)
 	
