@@ -8,6 +8,7 @@
 [ext_resource type="Shader" uid="uid://bsfy5upklry81" path="res://shaders/gridWorld.gdshader" id="7_grid"]
 [ext_resource type="PackedScene" uid="uid://dmlsjewxrvhvx" path="res://Objects/deathScreen.tscn" id="7_v158k"]
 [ext_resource type="PackedScene" uid="uid://dhxi18grdqvlm" path="res://Objects/boneManager.tscn" id="8_v158k"]
+[ext_resource type="PackedScene" uid="uid://bo27hqbdvcsen" path="res://Objects/playerBullets.tscn" id="9_h4fw4"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_box"]
 sky_top_color = Color(0.5019608, 0.6156863, 0.7882353, 1)
@@ -229,3 +230,5 @@ transform = Transform3D(150, 0, 0, 0, 1, 0, 0, 0, 150, 0, -1, 0)
 navigation_mesh = SubResource("NavigationMesh_wrm1d")
 
 [node name="BoneManager" parent="." unique_id=1528047808 instance=ExtResource("8_v158k")]
+
+[node name="PlayerBullets" parent="." unique_id=2108171536 instance=ExtResource("9_h4fw4")]
